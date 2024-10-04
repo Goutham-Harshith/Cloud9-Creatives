@@ -1,0 +1,7 @@
+{
+  "name": "Cloud9_Creatives",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular"
+}
