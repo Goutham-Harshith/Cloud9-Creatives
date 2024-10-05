@@ -1,0 +1,19 @@
+.center-content {
+    display: flex;
+    justify-content: center;  /* Centers horizontally */
+    align-items: center;      /* Centers vertically */
+    height: 100%;             /* Ensure it takes the full height */
+    flex-direction: column;   /* Stacks content vertically */
+  }
+
+.card-width
+{
+    cursor: pointer;
+    width: 50vw;
+    display: flex;
+    flex-direction: column;       /* Stack elements vertically */
+    justify-content: center;      /* Center items horizontally */
+    align-items: center;          /* Center items vertically */
+    height: 300px;                /* Optional: Set height to control vertical centering */
+    text-align: center;           /* Optional: Center text inside card */
+}
