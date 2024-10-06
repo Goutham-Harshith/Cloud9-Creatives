@@ -141,3 +141,17 @@
 .py-5 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
 
 // Bootstrap classes ended
+
+
+/* Global Variables */
+:root {
+    --scrollbar-thumb-color: #c0c0c0;
+    --scrollbar-track-color: #e0e0e0;
+  }
+  
+  /* Dark Theme */
+  .dark-theme {
+    --scrollbar-thumb-color: #606060;
+    --scrollbar-track-color: #303030;
+  }
+  

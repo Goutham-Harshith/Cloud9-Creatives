@@ -22,6 +22,8 @@ export class TabsPage {
   toggleTheme(event: any) {
     this.isDarkMode = event.detail.checked;
     localStorage.setItem("darkMode", JSON.stringify(this.isDarkMode));
+    document.body.classList.toggle('dark-theme', this.isDarkMode);
+    document.body.classList.toggle('light-theme', !this.isDarkMode);
 
     if (this.isDarkMode) {
       this.loadTheme('dark');
