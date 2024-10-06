@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
+import { Platform } from '@ionic/angular';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -11,7 +12,7 @@ export class AppComponent {
 
   activeTab: string = 'home';
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private platform: Platform) {}
 
   ngOnInit() {
     // Subscribe to NavigationEnd event to get the current URL
@@ -20,6 +21,15 @@ export class AppComponent {
       .subscribe((event: NavigationEnd) => {
        this.activeTab = event.url; // Get the current URL
       });
+  }
+
+  initializeApp() {
+    this.platform.ready().then(() => {
+      // Simulate a loading delay
+      setTimeout(() => {
+        // Hide loading spinner
+      }, 3000); // Change this duration to your desired loading time
+    });
   }
 
   setActiveTab(tab: string) {
