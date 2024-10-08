@@ -15,7 +15,11 @@ export const APP_CONSTANTS = {
     whiteInnerRope: '',
     Dhori: '',
     juteHandle: '',
-    zip: ''
+    zip: '',
+    miscellaneous: '',
+    mini: '',
+    small: '',
+    medium:''
 };
 
 // Example of using a type for your constants

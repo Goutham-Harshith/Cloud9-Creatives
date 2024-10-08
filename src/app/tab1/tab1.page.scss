@@ -17,3 +17,7 @@
     height: 300px;                /* Optional: Set height to control vertical centering */
     text-align: center;           /* Optional: Center text inside card */
 }
+
+ion-content {
+  --padding-top: 56px; /* This assumes the height of the header is 56px */
+}

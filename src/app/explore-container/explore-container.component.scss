@@ -83,3 +83,12 @@ h1 {
   float: right;
 }
 
+::ng-deep .custom-alert .alert-title {
+  color: red; /* Makes the header text red */
+  font-weight: bold;
+}
+
+.resultTitle
+{
+  text-align: center;
+}
