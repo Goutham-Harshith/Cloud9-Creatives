@@ -1,9 +1,8 @@
 <ion-content [fullscreen]="true" class="ion-padding-top">
   <div class="center-content">
-
-    <ion-alert [isOpen]="isAlertOpen" header="Important !"
-      message="Data is insufficient, you have to fill the settings form first." [buttons]="alertButtons"
-      (didDismiss)="setOpen(false)" cssClass="custom-alert" [backdropDismiss]="false"></ion-alert>
+<ion-alert [isOpen]="isAlertOpen" header="Important !"
+  message="Data is insufficient, you have to fill the settings form first." [buttons]="alertButtons"
+  (didDismiss)="setOpen(false)" cssClass="custom-alert" [backdropDismiss]="false"></ion-alert>
 
     <div class="paperContent" *ngIf="selectedTab === 'paper' ">
       <h1 class="mx-3">  Weight calculator</h1>
@@ -158,6 +157,19 @@
         <ion-content class="ion-padding">
           <div class="result-container">
             <!-- Final Price as Heading -->
+             <div class="float-end">
+              <ion-button title="share quote" (click)="downloadAndShareImage()">
+                <ion-icon name="share-social-outline" title="share quote"></ion-icon>
+              </ion-button>
+
+              <ion-button  id="present-alert" title="donwload quote">
+                <ion-icon name="download-outline" title="donwload quote" ></ion-icon>
+              </ion-button>
+              
+              <!-- Canvas element to generate image -->
+              <canvas id="canvas" width="800" height="500" style="display:none;"></canvas>
+
+             </div>
             <h1 class="final-price">Price : {{bagPrice}}/-</h1>
             
             <!-- Description Below the Price -->
@@ -168,6 +180,8 @@
             <!-- Optionally add a button or link to proceed -->
             <ion-button expand="block" (click)="closeModal()">Go Back</ion-button>
           </div>
+          <ion-alert trigger="present-alert" header="Would you like to change the price before sharing?"
+            [buttons]="alertButtonsForPrice" [inputs]="alertInputs" [backdropDismiss]="false"></ion-alert>
         </ion-content>
       </ng-template>
     </ion-modal>

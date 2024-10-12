@@ -141,7 +141,15 @@
 .py-5 { padding-top: 3rem !important; padding-bottom: 3rem !important; }
 
 // Bootstrap classes ended
+.float-end
+{
+  float: right;
+}
 
+.curosr-pointer
+{
+  cursor: pointer;
+}
 
 /* Global Variables */
 :root {

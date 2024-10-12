@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonModal, ModalController } from '@ionic/angular';
+import { Share } from '@capacitor/share';
 
 @Component({
   selector: 'app-explore-container',
@@ -22,6 +23,36 @@ export class ExploreContainerComponent implements OnInit {
   bagDescription: string = ''
   paperBagDescription: string = ''
   paperBagWeight: any;
+  newJuteBagPrice : number = 0;
+
+  alertButtonsForPrice = [
+    {
+      text: 'Change price',
+      role: 'confirm',
+      handler: (inputData: any) => {
+        console.log('Alert confirmed with price:', inputData['0']);
+        this.newJuteBagPrice = inputData['0'];
+        this.downloadImage(true);
+      },
+    },
+    {
+      text: 'Continiue with same price',
+      role: 'Same price',
+      handler: () => {
+        this.downloadImage(false);
+      },
+    },
+  ];
+
+   public alertInputs = [
+    {
+      type: 'number',
+      placeholder: 'Price',
+      value: 1,
+      min: 1,
+      max: 100,
+    }
+  ];
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private modalController: ModalController) { }
 
@@ -29,7 +60,7 @@ export class ExploreContainerComponent implements OnInit {
     this.route.queryParams.subscribe(params => {
       this.isAlertOpen = false;
       this.selectedTab = params['tab'];
-      console.log('User ID:', this.selectedTab);
+      console.log('Selected Tab:', this.selectedTab);
 
       let localPriceList :any = localStorage.getItem('priceList')
       this.priceList = JSON.parse(localPriceList);
@@ -119,22 +150,26 @@ export class ExploreContainerComponent implements OnInit {
       case 'white':
         if (formValue.quality === '14x15') {
           fabricPrice = this.priceList.white14x15;
-          descriptionText = descriptionText + '\n 14x15 quality';
+          descriptionText = `
+          14x15 quality`;
         }
         else {
           fabricPrice = this.priceList.white12x12;
-          descriptionText = descriptionText + '\n 12x12 quality' ;
+          descriptionText = descriptionText + `
+          12x12 quality` ;
         }
         break;
 
       case 'natural':
         if (formValue.quality === '14x15') {
           fabricPrice = this.priceList.natural14x15;
-          descriptionText = descriptionText + '\n 14x15 quality';
+          descriptionText = descriptionText + `
+          14x15 quality`;
         }
         else {
           fabricPrice = this.priceList.natural12x12;
-          descriptionText = descriptionText + '\n  12x12 quality';
+          descriptionText = descriptionText + `
+          12x12 quality`;
         }
         break;
     }
@@ -162,7 +197,10 @@ export class ExploreContainerComponent implements OnInit {
     {
       print = 5;
       doublePrint = 10;
-      labourCost = 15;
+      if(isSmallBag)
+      {
+        labourCost = 15;
+      }
     }
 
     let totalPrice = fabricCostPerBag + labourCost + machineDip + current + thread + miscellaneous;
@@ -171,65 +209,82 @@ export class ExploreContainerComponent implements OnInit {
     {
       case 'single':
         totalPrice =  totalPrice + print;
-        descriptionText = descriptionText + '\n Single side print';
+        descriptionText = descriptionText + `
+        Single side print`;
         break;
       case "double":
         totalPrice =  totalPrice + doublePrint;
-        descriptionText = descriptionText + '\n Double side print';
+        descriptionText = descriptionText + `
+        Double side print`;
         break;
       case 'plain':
-        descriptionText = descriptionText + '\n without print';
+        descriptionText = descriptionText + `
+        without print`;
         break;
     }
 
     switch (formValue.handle) {
       case "naturalTape":
         totalPrice = totalPrice + naturalHandle;
-        descriptionText = descriptionText + '\n Natural tape handle';
+        descriptionText = descriptionText + `
+        Natural tape handle`;
         break;
       case "whiteTape":
         totalPrice = totalPrice + whiteHandle;
-        descriptionText = descriptionText + '\n White tape handle';
+        descriptionText = descriptionText + `
+        White tape handle`;
         break;
       case 'naturalRope':
         totalPrice = totalPrice + naturalInnerRope;
-        descriptionText = descriptionText + '\n Natural rope handle';
+        descriptionText = descriptionText + `
+        Natural rope handle`;
         break;
       case "whiteRope":
         totalPrice = totalPrice + whiteInnerRope;
-        descriptionText = descriptionText + '\n White rope handle';
+        descriptionText = descriptionText + `
+        White rope handle`;
         break;
       case 'dhori':
         totalPrice = totalPrice + dhori;
-        descriptionText = descriptionText + '\n Dhori handle';
+        descriptionText = descriptionText + `
+        Dhori handle`;
         break;
       case "juteHandle":
         totalPrice = totalPrice + juteHandle;
-        descriptionText = descriptionText + '\n Jute handle';
+        descriptionText = descriptionText + `
+        Jute handle`;
         break;
     }
 
     if(formValue.zip)
     {
       totalPrice = totalPrice +  zip;
-      descriptionText = descriptionText + '\n includes zip';
+      descriptionText = descriptionText + `
+      includes zip`;
     }
+
+    console.log('***** Total Price *********', totalPrice);
 
     let profit;
     if(formValue.branding)
     {
       profit = totalPrice * profitPercentageBranding;
       marginPercent = '50%'
+      if(profit < 20)
+      {
+        profit = 20;
+      }
     }
-    else
-    {
+    else {
       profit = totalPrice * profitPercentage;
-      marginPercent = '60%'
+      marginPercent = '65%';
+      if (profit < 20) {
+        profit = 20;
+      }
     }
 
     this.bagPrice = Math.ceil(totalPrice + profit);
-
-    this.bagDescription = `${width}w x ${height}h x ${gusset}g  ${formValue.color} jute bag contains the following elements.`
+    this.alertInputs[0].value = this.bagPrice
 
     setTimeout(()=>
     {
@@ -244,13 +299,25 @@ export class ExploreContainerComponent implements OnInit {
         `;
         outputElement.innerHTML = message.replace(/\n/g, "<br>");
 
+        // Split the string into lines, trim spaces, and join them back
+        const cleanedString = descriptionText
+          .split('\n') // Split by new line
+          .map(line => line.trim()) // Trim spaces from each line
+          .join('\n'); // Join the lines back with new lines
+
+
+          this.bagDescription = `${width}w x ${height}h x ${gusset}g  ${formValue.color} jute bag contains the following elements.
+          ${cleanedString}`;
+
       }
+
     }, 0)
 
     
     console.log("level1 : ", level1);
     console.log("level2 : ", level2);
     console.log("level3 : ", level3);
+    console.log("level4 : ", level3);
     console.log("small bag : ", isSmallBag);
     console.log("Total fabirc : ", totalFabric);
     console.log("Bag Count : ", bagCountPerMeter);
@@ -290,4 +357,118 @@ export class ExploreContainerComponent implements OnInit {
   confirm() {
     this.modal.dismiss(null, 'confirm');
   }
+
+ wrapText = (context: CanvasRenderingContext2D, text: string, x: number, y: number, maxWidth: number, lineHeight: number) => { 
+  const lines = text.split('\n'); // Split by line breaks
+  
+    lines.forEach(line => {
+      const words = line.split(' ');
+      let currentLine = '';
+  
+      words.forEach(word => {
+        const testLine = currentLine + word + ' ';
+        const testWidth = context.measureText(testLine).width;
+  
+        if (testWidth > maxWidth && currentLine) {
+          context.fillText(currentLine, x, y);
+          currentLine = word + ' '; // Start new line with the current word
+          y += lineHeight; // Move down for the new line
+        } else {
+          currentLine = testLine;
+        }
+      });
+  
+      context.fillText(currentLine, x, y); // Draw last line
+      y += lineHeight; // Move down for the next line
+    });
+  };
+
+  
+  downloadImage(priceCheck : boolean) {
+    // Get the canvas element
+    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+  
+    if (ctx) {
+      // Draw background
+      ctx.fillStyle = '#ffffff'; // White background
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+      // Set text style
+      ctx.fillStyle = '#000000'; // Black text color
+      ctx.font = '20px Arial';
+  
+      // Add price text
+      if(priceCheck)
+      {
+        ctx.fillText('Price: ' + this.newJuteBagPrice + '/-', 10, 50);
+      }
+      else
+      {
+        ctx.fillText('Price: ' + this.bagPrice + '/-', 10, 50);
+      }
+ 
+  
+      // Set the bag description with line breaks
+      // Wrap and add the description text
+      const maxWidth = canvas.width - 20; // Maximum width of text inside the canvas
+      const lineHeight = 25; // Line height for wrapped text
+      this.wrapText(ctx, this.bagDescription, 10, 100, maxWidth, lineHeight);
+  
+      // Convert canvas to image
+      const image = canvas.toDataURL('image/png');
+  
+      // Create a temporary <a> element to trigger the download
+      const a = document.createElement('a');
+      a.href = image;
+      a.download = 'bag price.png'; // Set the file name
+      document.body.appendChild(a); // Append <a> to the document
+      a.click(); // Trigger download
+      document.body.removeChild(a); // Remove <a> after download
+    }
+  }
+
+  downloadAndShareImage() {
+    // Create the canvas and draw your content
+    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+    const ctx = canvas.getContext('2d');
+  
+    if (ctx) {
+      ctx.fillStyle = '#ffffff'; // White background
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#000000'; // Black text color
+      ctx.font = '20px Arial';
+      
+      // Add text
+      ctx.fillText('Price: ' + this.bagPrice + '/-', 10, 50);
+      ctx.fillText(this.bagDescription, 10, 100);
+
+      setTimeout(() => {
+        // Convert canvas to image
+        canvas.toBlob(async (blob: any) => {
+          // Create a URL for the image blob
+          console.log("before creating blob : ", blob);
+          const imageUrl = URL.createObjectURL(blob);
+
+          // Use the Capacitor Share API to share the image
+          await Share.share({
+            title: 'Share Bag Image',
+            text: 'Check out this bag price!',
+            url: imageUrl,
+            dialogTitle: 'Share Image',
+          });
+
+          // Revoke the object URL after sharing
+          URL.revokeObjectURL(imageUrl);
+        }, 'image/png');
+
+      }, 100)
+  
+
+    }
+  }
+
+  
+  
+  
 }
