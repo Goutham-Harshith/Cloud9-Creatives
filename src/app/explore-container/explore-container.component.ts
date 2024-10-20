@@ -3,6 +3,7 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { IonModal, ModalController } from '@ionic/angular';
 import { Share } from '@capacitor/share';
+import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 
 @Component({
   selector: 'app-explore-container',
@@ -415,16 +416,25 @@ export class ExploreContainerComponent implements OnInit {
       const lineHeight = 25; // Line height for wrapped text
       this.wrapText(ctx, this.bagDescription, 10, 100, maxWidth, lineHeight);
   
-      // Convert canvas to image
-      const image = canvas.toDataURL('image/png');
-  
-      // Create a temporary <a> element to trigger the download
-      const a = document.createElement('a');
-      a.href = image;
-      a.download = 'bag price.png'; // Set the file name
-      document.body.appendChild(a); // Append <a> to the document
-      a.click(); // Trigger download
-      document.body.removeChild(a); // Remove <a> after download
+    // Convert canvas to image and extract base64 data
+    const dataUrl = canvas.toDataURL('image/png', 1.0);
+    const base64Data = dataUrl.split(',')[1];  // Extract base64 part of DataURL
+
+    // Save the image to the filesystem
+    Filesystem.writeFile({
+      path: 'bag_price.png',
+      data: base64Data,  // Directly use base64 data
+      directory: Directory.External,
+      recursive: true,
+    })
+    .then(() => {
+      console.log('Image saved successfully');
+    })
+    .catch((error) => {
+      console.error('Error saving image', error);
+    });
+
+
     }
   }
 
