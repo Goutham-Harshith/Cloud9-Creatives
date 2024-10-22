@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'com.cloud9.creatives',
   appName: 'Cloud9 Creatives',
   webDir: 'www'
 };
