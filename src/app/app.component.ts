@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
+import { ToastrService } from 'ngx-toastr';
 import { filter } from 'rxjs/operators';
 
 @Component({
@@ -12,10 +13,11 @@ export class AppComponent {
 
   activeTab: string = 'home';
 
-  constructor(private router: Router, private platform: Platform) {}
+  constructor(private router: Router, private platform: Platform, private toastr: ToastrService) {}
 
   ngOnInit() {
     // Subscribe to NavigationEnd event to get the current URL
+    this.toastr.success('Operation successful!', 'Success');
     this.router.events
       .pipe(filter((event: any) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {

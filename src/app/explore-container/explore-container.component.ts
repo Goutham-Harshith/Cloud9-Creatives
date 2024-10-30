@@ -4,6 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IonModal, ModalController } from '@ionic/angular';
 import { Share } from '@capacitor/share';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
+import { Capacitor } from '@capacitor/core';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-explore-container',
@@ -55,9 +57,10 @@ export class ExploreContainerComponent implements OnInit {
     }
   ];
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private modalController: ModalController) { }
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private modalController: ModalController, private toastrService: ToastrService) { }
 
   ngOnInit() {
+    this.toastrService.success('Operation successful!', 'Success');
     this.route.queryParams.subscribe(params => {
       this.isAlertOpen = false;
       this.selectedTab = params['tab'];
@@ -385,99 +388,104 @@ export class ExploreContainerComponent implements OnInit {
   };
 
   
-  downloadImage(priceCheck : boolean) {
-    // Get the canvas element
-    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
+  async downloadImage(priceCheck: boolean) {
+    try {
+      // Get the canvas element
+      const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d');
   
-    if (ctx) {
-      // Draw background
-      ctx.fillStyle = '#ffffff'; // White background
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      if (ctx) {
+        // Draw background
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-      // Set text style
-      ctx.fillStyle = '#000000'; // Black text color
-      ctx.font = '20px Arial';
+        // Set text style
+        ctx.fillStyle = '#000000';
+        ctx.font = '20px Arial';
   
-      // Add price text
-      if(priceCheck)
-      {
-        ctx.fillText('Price: ' + this.newJuteBagPrice + '/-', 10, 50);
-      }
-      else
-      {
-        ctx.fillText('Price: ' + this.bagPrice + '/-', 10, 50);
-      }
- 
+        // Add price text
+        const priceText = priceCheck ? `Price: ${this.newJuteBagPrice}/-` : `Price: ${this.bagPrice}/-`;
+        ctx.fillText(priceText, 10, 50);
   
-      // Set the bag description with line breaks
-      // Wrap and add the description text
-      const maxWidth = canvas.width - 20; // Maximum width of text inside the canvas
-      const lineHeight = 25; // Line height for wrapped text
-      this.wrapText(ctx, this.bagDescription, 10, 100, maxWidth, lineHeight);
+        // Set the bag description with line breaks
+        const maxWidth = canvas.width - 20;
+        const lineHeight = 25;
+        this.wrapText(ctx, this.bagDescription, 10, 100, maxWidth, lineHeight);
   
-    // Convert canvas to image and extract base64 data
-    const dataUrl = canvas.toDataURL('image/png', 1.0);
-    const base64Data = dataUrl.split(',')[1];  // Extract base64 part of DataURL
-
-    // Save the image to the filesystem
-    Filesystem.writeFile({
-      path: 'bag_price.png',
-      data: base64Data,  // Directly use base64 data
-      directory: Directory.External,
-      recursive: true,
-    })
-    .then(() => {
-      console.log('Image saved successfully');
-    })
-    .catch((error) => {
-      console.error('Error saving image', error);
-    });
-
-
-    }
-  }
-
-  downloadAndShareImage() {
-    // Create the canvas and draw your content
-    const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-    const ctx = canvas.getContext('2d');
-  
-    if (ctx) {
-      ctx.fillStyle = '#ffffff'; // White background
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#000000'; // Black text color
-      ctx.font = '20px Arial';
-      
-      // Add text
-      ctx.fillText('Price: ' + this.bagPrice + '/-', 10, 50);
-      ctx.fillText(this.bagDescription, 10, 100);
-
-      setTimeout(() => {
         // Convert canvas to image
-        canvas.toBlob(async (blob: any) => {
-          // Create a URL for the image blob
-          console.log("before creating blob : ", blob);
-          const imageUrl = URL.createObjectURL(blob);
-
-          // Use the Capacitor Share API to share the image
-          await Share.share({
-            title: 'Share Bag Image',
-            text: 'Check out this bag price!',
-            url: imageUrl,
-            dialogTitle: 'Share Image',
-          });
-
-          // Revoke the object URL after sharing
-          URL.revokeObjectURL(imageUrl);
-        }, 'image/png');
-
-      }, 100)
+        const dataUrl = canvas.toDataURL('image/png', 1.0);
+        const base64Data = dataUrl.split(',')[1];
   
-
+        // Write file to the external directory
+        const result = await Filesystem.writeFile({
+          path: 'bag_price.png',
+          data: base64Data,
+          directory: Directory.Documents, // or use Directory.External for Android
+          recursive: true,
+        });
+  
+        // Log success and provide the saved path for debugging
+        this.toastrService.success("Image downloaded into your gallery")
+        console.log('Image saved successfully at:', result.uri);
+  
+        // Optionally, convert URI to a shareable format
+        const displayUri = Capacitor.convertFileSrc(result.uri);
+        console.log('Display URI:', displayUri);
+      }
+    } catch (error) {
+      this.toastrService.error("Failed to download quote, contact developer");
+      console.error('Error saving image', error);
     }
   }
 
+  async downloadAndShareImage() {
+    try {
+      // Generate the image on the canvas
+      const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+      const dataUrl = canvas.toDataURL('image/png');
+  
+      // Convert the data URL to Blob
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+  
+      // Convert Blob to Base64
+      const base64Data = await this.convertBlobToBase64(blob) as string;
+  
+      // Define the file name and save it to the external directory
+      const fileName = `shared-image-${Date.now()}.png`;
+      const writeResult = await Filesystem.writeFile({
+        path: fileName,
+        data: base64Data,
+        directory: Directory.External, // or Directory.Documents for broad accessibility
+      });
+  
+      // Use the full path for sharing
+      const fileUri = Capacitor.convertFileSrc(writeResult.uri);
+  
+      // Share the file using the Share API
+      await Share.share({
+        title: 'Shared Image',
+        text: 'Check out this image!',
+        url: fileUri,
+        dialogTitle: 'Share with...'
+      });
+  
+    } catch (error) {
+      console.error('Error sharing image:', error);
+    }
+  }
+  
+  // Helper function to convert Blob to Base64
+  private convertBlobToBase64(blob: Blob): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = () => {
+        resolve(reader.result as string);
+      };
+      reader.readAsDataURL(blob);
+    });
+  }
   
   
   
