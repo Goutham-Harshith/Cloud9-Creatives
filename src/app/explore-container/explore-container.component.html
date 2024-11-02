@@ -49,7 +49,11 @@
           </ion-item>
           <ion-item>
             <ion-label>Zip : </ion-label>               
-            <ion-toggle formControlName="zip"></ion-toggle> 
+            <ion-select placeholder="Select one" labelPlacement="fixed" formControlName="zip">
+              <ion-select-option value="none">None</ion-select-option>
+              <ion-select-option value="zip">Zip</ion-select-option>
+              <ion-select-option value="velcro">Velcro</ion-select-option>
+            </ion-select>
           </ion-item>
           <ion-item>
             <ion-label>Color : </ion-label>
@@ -158,16 +162,35 @@
           <div class="result-container">
             <!-- Final Price as Heading -->
              <div class="float-end">
-              <ion-button title="share quote" (click)="downloadAndShareImage()">
-                <ion-icon name="share-social-outline" title="share quote"></ion-icon>
+              <ion-button title="share quote" (click)="sharePricesForm()" [disabled]="disableShare">
+                <ng-container *ngIf="disableShare; else showShare">
+                  <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
+                </ng-container>
+                <ng-template #showShare>
+                  <ion-icon name="share-social-outline" title="share quote"></ion-icon>
+                </ng-template>
               </ion-button>
 
-              <ion-button  id="present-alert" title="donwload quote">
-                <ion-icon name="download-outline" title="donwload quote" ></ion-icon>
+              <ion-button title="download quote" (click)="downloadPricesForm()" [disabled]="disableShare">
+                <ng-container *ngIf="disableShare; else showdownload">
+                  <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
+                </ng-container>
+                <ng-template #showdownload>
+                  <ion-icon name="download-outline" title="donwload quote" ></ion-icon>
+                </ng-template>
+              </ion-button>
+
+              <ion-button title="share shape"  (click)="shareBagDimensions()" [disabled]="disableShare">
+                <ng-container *ngIf="disableShare; else showShape">
+                  <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
+                </ng-container>
+                <ng-template #showShape>
+                  <ion-icon name="cut-outline"></ion-icon>
+                </ng-template>
               </ion-button>
               
               <!-- Canvas element to generate image -->
-              <canvas id="canvas" width="800" height="500" style="display:none;"></canvas>
+              <canvas id="canvas" width="800" height="600" style="display:none;"></canvas>
 
              </div>
             <h1 class="final-price">Price : {{bagPrice}}/-</h1>
@@ -180,8 +203,11 @@
             <!-- Optionally add a button or link to proceed -->
             <ion-button expand="block" (click)="closeModal()">Go Back</ion-button>
           </div>
-          <ion-alert trigger="present-alert" header="Would you like to change the price before sharing?"
-            [buttons]="alertButtonsForPrice" [inputs]="alertInputs" [backdropDismiss]="false"></ion-alert>
+          <!-- <ion-alert trigger="present-alert" header="Would you like to change the price before sharing?" 
+          [buttons]="alertButtonsForPrice" [inputs]="alertInputs" [backdropDismiss]="false"></ion-alert>
+
+          <ion-alert trigger="present-alert2" header="Would you like to change the price before downloading?"
+          [buttons]="alertButtonsForPrice2" [inputs]="alertInputs2" [backdropDismiss]="false"></ion-alert> -->
         </ion-content>
       </ng-template>
     </ion-modal>

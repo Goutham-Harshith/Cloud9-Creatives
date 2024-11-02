@@ -1,11 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { IonModal, ModalController } from '@ionic/angular';
+import { AlertController, IonModal, ModalController, ToastController } from '@ionic/angular';
 import { Share } from '@capacitor/share';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
-import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-explore-container',
@@ -23,44 +22,133 @@ export class ExploreContainerComponent implements OnInit {
   alertButtons = ['Go to settings'];
   @ViewChild(IonModal) modal: any;
   bagPrice: any = '';
+  minOrderQuantity: number = 20;
   bagDescription: string = ''
   paperBagDescription: string = ''
   paperBagWeight: any;
   newJuteBagPrice : number = 0;
+  newBagQuantity: number = 0;
+  disableShare: boolean = false;
 
   alertButtonsForPrice = [
     {
-      text: 'Change price',
+      text: 'share quote',
       role: 'confirm',
       handler: (inputData: any) => {
-        console.log('Alert confirmed with price:', inputData['0']);
-        this.newJuteBagPrice = inputData['0'];
+        console.log('Alert confirmed with price:', inputData['price']);
+        this.newJuteBagPrice = Number(inputData['price']);
+        this.newBagQuantity = Number(inputData['quantity']);
+        this.downloadAndShareImage(true);
+      },
+    },
+    {
+      text: 'Cancel',
+      role: 'Same price',
+      cssClass: 'danger-button', // Add custom CSS class here
+      handler: () => {
+        // this.downloadAndShareImage(false);
+      },
+    },
+  ];
+
+  alertButtonsForPrice1 = [
+    {
+      text: 'Share Dimensions',
+      role: 'confirm',
+      handler: (inputData: any) => {
+        console.log('Alert confirmed with price:', inputData);
+        this.newBagQuantity = Number(inputData['quantity']);
+        this.downloadAndShareDimensions(true);
+      },
+    },
+    {
+      text: 'Cancel',
+      role: 'Same price',
+      cssClass: 'danger-button',
+      handler: () => {
+        // this.downloadImage(false);
+      },
+    },
+  ];
+
+  alertButtonsForPrice2 = [
+    {
+      text: 'Download price',
+      role: 'confirm',
+      handler: (inputData: any) => {
+        console.log('Alert confirmed with price:', inputData);
+        this.newJuteBagPrice = Number(inputData['price']);
+        this.newBagQuantity = Number(inputData['quantity']);
         this.downloadImage(true);
       },
     },
     {
-      text: 'Continiue with same price',
+      text: 'Cancel',
       role: 'Same price',
+      cssClass: 'danger-button',
       handler: () => {
-        this.downloadImage(false);
+        // this.downloadImage(false);
       },
     },
   ];
 
    public alertInputs = [
     {
-      type: 'number',
-      placeholder: 'Price',
-      value: 1,
+      name: 'price',
+      type: 'number' as const,
+      placeholder: 'Enter price',
+      label: 'Price',
+      value: this.bagPrice,
       min: 1,
-      max: 100,
-    }
+      max: 1000,
+    },
+    {
+      name: 'quantity',
+      type: 'number' as const,
+      placeholder: 'Enter quantity',
+      label: 'Quanity',
+      value: this.minOrderQuantity,
+      min: 20,
+      max: 100000,
+    },
+
   ];
 
-  constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private modalController: ModalController, private toastrService: ToastrService) { }
+  public alertInputs1 = [
+    {
+      name: 'quantity',
+      type: 'number' as const,
+      placeholder: 'Enter quantity',
+      label: 'Quanity',
+      value: this.minOrderQuantity,
+      min: 20,
+      max: 100000,
+    },
+  ];
+
+  public alertInputs2 = [
+    {
+      name: 'price',
+      type: 'number' as const,
+      placeholder: 'Price',
+      value: this.bagPrice,
+      min: 1,
+      max: 1000,
+    },
+    {
+      name: 'quantity',
+      type: 'number' as const,
+      placeholder: 'Enter quantity',
+      label: 'Quanity',
+      value: this.minOrderQuantity,
+      min: 20,
+      max: 100000,
+    },
+  ];
+
+  constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private modalController: ModalController, private toastController: ToastController, private alertController: AlertController ) { }
 
   ngOnInit() {
-    this.toastrService.success('Operation successful!', 'Success');
     this.route.queryParams.subscribe(params => {
       this.isAlertOpen = false;
       this.selectedTab = params['tab'];
@@ -88,7 +176,7 @@ export class ExploreContainerComponent implements OnInit {
       height: ['6', Validators.required],
       gusset: ['5', Validators.required],
       branding: [false, Validators.required],
-      zip: [true, Validators.required],
+      zip: ['zip', Validators.required],
       color: ['white', Validators.required],
       quality: ['14x15', Validators.required],
       handle: ['whiteRope', Validators.required],
@@ -127,6 +215,12 @@ export class ExploreContainerComponent implements OnInit {
 
   onJuteSubmit()
   {
+    this.disableShare = true;
+    setTimeout(() => {
+      // enable share button after 5 seconds;
+      this.disableShare = false;
+    }, 5000)
+    this.bagDescription = '';
     let isSmallBag =  false;
     let descriptionText = '';
     let marginPercent = '';
@@ -192,6 +286,7 @@ export class ExploreContainerComponent implements OnInit {
     let dhori =  this.priceList.Dhori;
     let juteHandle =  this.priceList.juteHandle;
     let zip =  this.priceList.zip;
+    let velcro = this.priceList.velcro
     let print =  this.priceList.print;
     let doublePrint =  this.priceList.doublePrint;
     let miscellaneous = this.priceList.miscellaneous;
@@ -260,12 +355,43 @@ export class ExploreContainerComponent implements OnInit {
         break;
     }
 
-    if(formValue.zip)
-    {
-      totalPrice = totalPrice +  zip;
-      descriptionText = descriptionText + `
+    switch (formValue.zip) {
+      case "zip":
+        totalPrice = totalPrice + zip;
+        descriptionText = descriptionText + `
       includes zip`;
+        break;
+      case "velcro":
+        totalPrice = totalPrice + velcro;
+        descriptionText = descriptionText + `
+      includes velcro`;
+        break;
+      case 'none':
+        totalPrice = totalPrice;
+        break;
     }
+
+    // if(formValue.zip)
+    // {
+    //   totalPrice = totalPrice +  zip;
+    //   descriptionText = descriptionText + `
+    //   includes zip`;
+    // }
+
+    // let totalBill = this.newJuteBagPrice * this.newBagQuantity;
+    // let advanceAmount =  totalBill/2;
+
+    // let priceQuote = `Quanity : ${this.newBagQuantity}
+    // Total Amount = ${totalBill}/-
+    // Advance Amount(50%) = ${advanceAmount}/-
+
+    // Please pay the advance amount to confirm your order, after your payment we will add your order to lineup.
+
+    // Important: Please share a screenshot after the payment.
+    // `;
+
+    // descriptionText = descriptionText + `
+    // ${priceQuote}`;
 
     console.log('***** Total Price *********', totalPrice);
 
@@ -288,7 +414,12 @@ export class ExploreContainerComponent implements OnInit {
     }
 
     this.bagPrice = Math.ceil(totalPrice + profit);
-    this.alertInputs[0].value = this.bagPrice
+    this.alertInputs[0].value = this.bagPrice;
+    this.alertInputs[1].value = this.minOrderQuantity;
+    this.alertInputs1[0].value = this.minOrderQuantity;
+    this.alertInputs2[0].value = this.bagPrice;
+    this.alertInputs2[1].value = this.minOrderQuantity;
+  
 
     setTimeout(()=>
     {
@@ -390,86 +521,250 @@ export class ExploreContainerComponent implements OnInit {
   
   async downloadImage(priceCheck: boolean) {
     try {
-      // Get the canvas element
       const canvas = document.getElementById('canvas') as HTMLCanvasElement;
       const ctx = canvas.getContext('2d');
   
       if (ctx) {
-        // Draw background
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-        // Set text style
         ctx.fillStyle = '#000000';
         ctx.font = '20px Arial';
   
-        // Add price text
         const priceText = priceCheck ? `Price: ${this.newJuteBagPrice}/-` : `Price: ${this.bagPrice}/-`;
         ctx.fillText(priceText, 10, 50);
   
-        // Set the bag description with line breaks
         const maxWidth = canvas.width - 20;
         const lineHeight = 25;
+  
+        // Reset bagDescription and create new description content
+        this.bagDescription = `Description: ${this.pricingForm.value.width}w x ${this.pricingForm.value.height}h x ${this.pricingForm.value.gusset}g ${this.pricingForm.value.color} jute bag contains the following elements.\n`;
+  
+        const totalBill = this.newJuteBagPrice * this.newBagQuantity;
+        const advanceAmount = totalBill / 2;
+  
+        // Define priceQuote with cleaned alignment
+        let priceQuote = `
+          Quantity: ${this.newBagQuantity}
+          Total Amount: ${totalBill}/-
+          Advance Amount (50%): ${advanceAmount}/-
+  
+          Please pay the advance amount to confirm your order. After your payment, we will add your order to the lineup.
+  
+          Important: Please share a screenshot after the payment.
+        `;
+  
+        // Clean up alignment of priceQuote
+        const cleanedString = priceQuote
+          .split('\n') // Split by new line
+          .map(line => line.trim()) // Trim spaces from each line
+          .join('\n'); // Join the lines back with new lines
+  
+        // Append additional description elements
+        this.bagDescription += `
+        ${this.getPrintDescription(this.pricingForm.value.print)}
+        ${this.getHandleDescription(this.pricingForm.value.handle)}
+        ${this.getZipDescription(this.pricingForm.value.zip)}
+        `;
+  
+        // Append the cleaned price quote
+        this.bagDescription += `\n${cleanedString}`;
+
+        this.bagDescription = this.bagDescription
+          .split('\n') // Split by new line
+          .map(line => line.trim()) // Trim spaces from each line
+          .join('\n'); // Join the lines back with new lines
+
+        console.log("Bag Description ", this.bagDescription);
+        // Draw the text on the canvas with proper alignment
         this.wrapText(ctx, this.bagDescription, 10, 100, maxWidth, lineHeight);
   
-        // Convert canvas to image
         const dataUrl = canvas.toDataURL('image/png', 1.0);
         const base64Data = dataUrl.split(',')[1];
   
-        // Write file to the external directory
         const result = await Filesystem.writeFile({
           path: 'bag_price.png',
           data: base64Data,
-          directory: Directory.Documents, // or use Directory.External for Android
+          directory: Directory.Documents,
           recursive: true,
         });
   
-        // Log success and provide the saved path for debugging
-        this.toastrService.success("Image downloaded into your gallery")
         console.log('Image saved successfully at:', result.uri);
+        this.successToastr();
   
-        // Optionally, convert URI to a shareable format
         const displayUri = Capacitor.convertFileSrc(result.uri);
         console.log('Display URI:', displayUri);
       }
     } catch (error) {
-      this.toastrService.error("Failed to download quote, contact developer");
       console.error('Error saving image', error);
+      this.errorToastr();
+    }
+  }
+  
+  async downloadAndShareImage(priceCheck: boolean) {
+    try {
+      const canvas = document.getElementById('canvas') as HTMLCanvasElement;
+      const ctx = canvas.getContext('2d');
+  
+      if (ctx) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+  
+        ctx.fillStyle = '#000000';
+        ctx.font = '20px Arial';
+  
+        const priceText = priceCheck ? `Price: ${this.newJuteBagPrice}/-` : `Price: ${this.bagPrice}/-`;
+        ctx.fillText(priceText, 10, 50);
+  
+        const maxWidth = canvas.width - 20;
+        const lineHeight = 25;
+  
+        // Reset bagDescription and create new description content
+        this.bagDescription = `Description: ${this.pricingForm.value.width}w x ${this.pricingForm.value.height}h x ${this.pricingForm.value.gusset}g ${this.pricingForm.value.color} jute bag contains the following elements.\n`;
+  
+        const totalBill = this.newJuteBagPrice * this.newBagQuantity;
+        const advanceAmount = totalBill / 2;
+  
+        // Define priceQuote with cleaned alignment
+        let priceQuote = `
+          Quantity: ${this.newBagQuantity}
+          Total Amount: ${totalBill}/-
+          Advance Amount (50%): ${advanceAmount}/-
+  
+          Please pay the advance amount to confirm your order. After your payment, we will add your order to the lineup.
+  
+          Important: Please share a screenshot after the payment.
+        `;
+  
+        // Clean up alignment of priceQuote
+        const cleanedString = priceQuote
+          .split('\n') // Split by new line
+          .map(line => line.trim()) // Trim spaces from each line
+          .join('\n'); // Join the lines back with new lines
+  
+        // Append additional description elements
+        this.bagDescription += `
+        ${this.getPrintDescription(this.pricingForm.value.print)}
+        ${this.getHandleDescription(this.pricingForm.value.handle)}
+        ${this.getZipDescription(this.pricingForm.value.zip)}
+        `;
+  
+        // Append the cleaned price quote
+        this.bagDescription += `\n\n${cleanedString}`;
+
+        this.bagDescription = this.bagDescription
+        .split('\n') // Split by new line
+        .map(line => line.trim()) // Trim spaces from each line
+        .join('\n'); // Join the lines back with new lines
+  
+        // Draw the text on the canvas with proper alignment
+        this.wrapText(ctx, this.bagDescription, 10, 100, maxWidth, lineHeight);
+  
+        const dataUrl = canvas.toDataURL('image/png');
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
+        const base64Data = await this.convertBlobToBase64(blob) as string;
+  
+        const fileName = `shared-image-${Date.now()}.png`;
+        const writeResult = await Filesystem.writeFile({
+          path: fileName,
+          data: base64Data,
+          directory: Directory.External,
+        });
+  
+        const fileUri = writeResult.uri;
+  
+        await Share.share({
+          title: 'Shared Image',
+          text: 'Please confirm your order details',
+          files: [fileUri],
+          dialogTitle: 'Share with...'
+        });
+      }
+    } catch (error) {
+      console.error('Error sharing image:', error);
     }
   }
 
-  async downloadAndShareImage() {
+  async downloadAndShareDimensions(priceCheck: boolean) {
     try {
-      // Generate the image on the canvas
       const canvas = document.getElementById('canvas') as HTMLCanvasElement;
-      const dataUrl = canvas.toDataURL('image/png');
+      const ctx = canvas.getContext('2d');
   
-      // Convert the data URL to Blob
-      const response = await fetch(dataUrl);
-      const blob = await response.blob();
+      if (ctx) {
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-      // Convert Blob to Base64
-      const base64Data = await this.convertBlobToBase64(blob) as string;
+        ctx.fillStyle = '#000000';
+        ctx.font = '20px Arial';
   
-      // Define the file name and save it to the external directory
-      const fileName = `shared-image-${Date.now()}.png`;
-      const writeResult = await Filesystem.writeFile({
-        path: fileName,
-        data: base64Data,
-        directory: Directory.External, // or Directory.Documents for broad accessibility
-      });
+        const maxWidth = canvas.width - 20;
+        const lineHeight = 25;
   
-      // Use the full path for sharing
-      const fileUri = Capacitor.convertFileSrc(writeResult.uri);
+        // Reset bagDescription and create new description content
+        let bagDescription = `Bag Dimensions : ${this.pricingForm.value.width}w x ${this.pricingForm.value.height}h x ${this.pricingForm.value.gusset}g \n`;
+        
+        let width = Number(this.pricingForm.value.width);
+        let height = Number(this.pricingForm.value.height) + 0.5;
+
+        let gussetHeight = height +  width + height;
+        let gussetWidth = Number(this.pricingForm.value.gusset) + 2.5;
+
+        let zipWidth =  width - 1;
+        let zipHeight =  Number(this.pricingForm.value.gusset) + 1
+
+        bagDescription +=  `
+        Bag Count : ${this.newBagQuantity} bags
+        Color     : ${this.pricingForm.value.color}
+        Quality   : ${this.pricingForm.value.quality}
+
+        ${width} x ${height} ${this.newBagQuantity * 2}pcs\n
+        ${this.generateMultiplicationTable(width)}
+        ${this.generateMultiplicationTable(height)}
+
+        ${gussetHeight} x ${gussetWidth} ${this.newBagQuantity}pcs\n
+        ${this.generateMultiplicationTable(gussetHeight)}
+        ${this.generateMultiplicationTable(gussetWidth)} \n`
+
+        if (this.pricingForm.value.zip == 'zip') {
+          bagDescription += `
+        ${zipWidth} x ${zipHeight} ${this.newBagQuantity}pcs\n
+        ${this.generateMultiplicationTable(zipWidth)}
+        ${this.generateMultiplicationTable(zipHeight)}`
+        }
+
+        // Clean up alignment of priceQuote
+        const cleanedString = bagDescription
+          .split('\n') // Split by new line
+          .map(line => line.trim()) // Trim spaces from each line
+          .join('\n'); // Join the lines back with new lines
+
+        console.log("Final string : ", cleanedString);
+
+        // Draw the text on the canvas with proper alignment
+        this.wrapText(ctx, cleanedString, 10, 25, maxWidth, lineHeight);
   
-      // Share the file using the Share API
-      await Share.share({
-        title: 'Shared Image',
-        text: 'Check out this image!',
-        url: fileUri,
-        dialogTitle: 'Share with...'
-      });
+        const dataUrl = canvas.toDataURL('image/png');
+        const response = await fetch(dataUrl);
+        const blob = await response.blob();
+        const base64Data = await this.convertBlobToBase64(blob) as string;
   
+        const fileName = `Bag Dimensions-${Date.now()}.png`;
+        const writeResult = await Filesystem.writeFile({
+          path: fileName,
+          data: base64Data,
+          directory: Directory.External,
+        });
+  
+        const fileUri = writeResult.uri;
+  
+        await Share.share({
+          title: 'Shared Image',
+          text: 'New Order',
+          files: [fileUri],
+          dialogTitle: 'Share with...'
+        });
+      }
     } catch (error) {
       console.error('Error sharing image:', error);
     }
@@ -486,6 +781,135 @@ export class ExploreContainerComponent implements OnInit {
       reader.readAsDataURL(blob);
     });
   }
+  
+
+  async successToastr() {
+    const toast = await this.toastController.create({
+      message: 'Price downloaded to your gallery',
+      duration: 1500,
+      position: 'top',
+      swipeGesture: 'vertical',
+      color: 'primary',
+      cssClass: 'toast-top-right',
+      animated: true,
+      icon: "checkmark-circle-outline",
+      buttons: [
+        {
+          icon: 'close', // Add dismiss icon here (Ionicons, e.g., 'close' or 'close-circle')
+          role: 'cancel', // Defines a "cancel" role that dismisses the toast
+          handler: () => {
+            console.log('Toast dismissed');
+          }
+        }
+      ]
+    });
+
+    await toast.present();
+  }
+
+  async errorToastr() {
+    const toast = await this.toastController.create({
+      message: 'Something went wrong, contact developer',
+      duration: 1500,
+      position: 'top',
+      swipeGesture: 'vertical',
+      color: 'danger'
+    });
+
+    await toast.present();
+  }
+
+  async sharePricesForm() {
+    this.alertInputs[0].value = this.bagPrice;
+    this.alertInputs[1].value = this.minOrderQuantity;
+  
+    const alert = await this.alertController.create({
+      header: 'Please enter the details.',
+      inputs: this.alertInputs, // Use dynamically updated inputs
+      buttons: this.alertButtonsForPrice,
+      backdropDismiss: false,
+    });
+  
+    await alert.present();
+  }
+  
+  async downloadPricesForm() {
+    this.alertInputs2[0].value = this.bagPrice;
+    this.alertInputs2[1].value = this.minOrderQuantity;
+  
+    const alert = await this.alertController.create({
+      header: 'Please enter the details',
+      inputs: this.alertInputs2, // Use dynamically updated inputs
+      buttons: this.alertButtonsForPrice2,
+      backdropDismiss: false,
+    });
+  
+    await alert.present();
+  }
+
+  async shareBagDimensions() {
+    this.alertInputs1[0].value = this.minOrderQuantity;
+    const alert = await this.alertController.create({
+      header: 'Please enter the quantity',
+      inputs: this.alertInputs1, // Use dynamically updated inputs
+      buttons: this.alertButtonsForPrice1,
+      backdropDismiss: false,
+    });
+  
+    await alert.present();
+  }
+
+  getPrintDescription(printType: string): string {
+    switch (printType) {
+      case 'single':
+        return 'Single side print';
+      case 'double':
+        return 'Double side print';
+      default:
+        return 'without print';
+    }
+  }
+  
+  getHandleDescription(handleType: string): string {
+    switch (handleType) {
+      case 'naturalTape':
+        return 'Natural tape handle';
+      case 'whiteTape':
+        return 'White tape handle';
+      case 'naturalRope':
+        return 'Natural rope handle';
+      case 'whiteRope':
+        return 'White rope handle';
+      case 'dhori':
+        return 'Dhori handle';
+      case 'juteHandle':
+        return 'Jute handle';
+      default:
+        return 'No handle selected';
+    }
+  }
+  
+  getZipDescription(zipType: string): string {
+    switch (zipType) {
+      case 'zip':
+        return 'includes zip';
+      case 'velcro':
+        return 'includes velcro';
+      default:
+        return 'No closure selected';
+    }
+  }
+
+  generateMultiplicationTable(number: number): string {
+    let table = '';
+
+    for (let i = 1; i <= 15; i++) {
+      table += `${number * i} `;
+    }
+
+    return table.trim(); // Remove any trailing whitespace
+  }
+  
   
   
   

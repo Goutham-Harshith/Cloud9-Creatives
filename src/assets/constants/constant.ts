@@ -16,6 +16,7 @@ export const APP_CONSTANTS = {
     Dhori: '',
     juteHandle: '',
     zip: '',
+    velcro: '',
     miscellaneous: '',
     mini: '',
     small: '',

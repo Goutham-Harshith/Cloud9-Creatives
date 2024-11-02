@@ -81,6 +81,10 @@
       </ion-item>
 
       <ion-item>
+        <ion-input label="Velcro : " placeholder="enter value" type="number" (keyup)="saveChanges()" [(ngModel)]="priceList.velcro"></ion-input>
+      </ion-item>
+
+      <ion-item>
         <ion-input label="Miscellaneous : " placeholder="enter value" type="number" (keyup)="saveChanges()" [(ngModel)]="priceList.miscellaneous"></ion-input>
       </ion-item>
 

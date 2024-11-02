@@ -1,8 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Platform } from '@ionic/angular';
-import { ToastrService } from 'ngx-toastr';
 import { filter } from 'rxjs/operators';
+import { SplashScreen } from '@capacitor/splash-screen';
 
 @Component({
   selector: 'app-root',
@@ -12,12 +12,13 @@ import { filter } from 'rxjs/operators';
 export class AppComponent {
 
   activeTab: string = 'home';
+  isLoading = true;
 
-  constructor(private router: Router, private platform: Platform, private toastr: ToastrService) {}
+  constructor(private router: Router, private platform: Platform) {}
 
   ngOnInit() {
     // Subscribe to NavigationEnd event to get the current URL
-    this.toastr.success('Operation successful!', 'Success');
+    this.initializeApp();
     this.router.events
       .pipe(filter((event: any) => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
@@ -28,8 +29,9 @@ export class AppComponent {
   initializeApp() {
     this.platform.ready().then(() => {
       // Simulate a loading delay
+      SplashScreen.hide(); // Explicitly hide the default splash screen
       setTimeout(() => {
-        // Hide loading spinner
+        this.isLoading = false;
       }, 3000); // Change this duration to your desired loading time
     });
   }
@@ -37,5 +39,12 @@ export class AppComponent {
   setActiveTab(tab: string) {
     this.activeTab = tab;
   }
+
+  // async initializeApp() {
+  //   // Simulate load delay for the splash screen
+  //   setTimeout(() => {
+  //     this.isLoading = false;
+  //   }, 3000); // Adjust duration as needed
+  // }
 
 }

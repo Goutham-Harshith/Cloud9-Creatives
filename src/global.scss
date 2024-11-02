@@ -162,4 +162,42 @@
     --scrollbar-thumb-color: #606060;
     --scrollbar-track-color: #303030;
   }
+ 
   
+  .toast-top-right {
+    .toast-wrapper {
+      right: 16px;  /* Adjust as needed */
+      top: 16px;
+      margin: 0;
+      width: auto;
+      max-width: 300px; /* Adjust width as needed */
+    }
+  }
+
+  /* global.scss or component-specific SCSS */
+.danger-button {
+  color: red !important;
+ }
+
+ .custom-splash {
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column; /* Arrange items in a column */
+  justify-content: center; /* Center items vertically */
+  align-items: center;     /* Center items horizontally */
+  background-color: #ffffff;
+  z-index: 9999;
+}
+
+.splash-logo {
+  width: 150px; /* Adjust width as needed */
+  margin-bottom: 20px; /* Space between logo and progress bar */
+}
+
+.splash-progress-bar {
+  width: 65%; /* Set width of the progress bar */
+  height: 6px; /* Set height of the progress bar */
+}
+
