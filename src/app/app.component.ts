@@ -14,7 +14,12 @@ export class AppComponent {
   activeTab: string = 'home';
   isLoading = true;
 
-  constructor(private router: Router, private platform: Platform) {}
+  constructor(private router: Router, private platform: Platform) {
+    // SplashScreen.show({
+    //   showDuration: 5000,
+    //   autoHide: true,
+    // });
+  }
 
   ngOnInit() {
     // Subscribe to NavigationEnd event to get the current URL
@@ -29,7 +34,6 @@ export class AppComponent {
   initializeApp() {
     this.platform.ready().then(() => {
       // Simulate a loading delay
-      SplashScreen.hide(); // Explicitly hide the default splash screen
       setTimeout(() => {
         this.isLoading = false;
       }, 3000); // Change this duration to your desired loading time

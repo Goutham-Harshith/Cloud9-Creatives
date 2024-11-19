@@ -235,7 +235,7 @@ export class ExploreContainerComponent implements OnInit {
 
     let totalFabric =  Math.ceil(level1) + Math.ceil(level2);
 
-    if(formValue.zip)
+    if(formValue.zip == 'zip')
     {
       totalFabric = totalFabric + Math.ceil(level3);
     }
@@ -527,18 +527,31 @@ export class ExploreContainerComponent implements OnInit {
       if (ctx) {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
+
+        // Load the logo image
+        const logo = new Image();
+        logo.src = 'assets/icon/logo.png'; // Update this path to where your logo is located;
+
+        logo.onload = async() => {
+        // Draw the logo in the center at the top
+        const logoWidth = 100; // Adjust the logo width as desired
+        const logoHeight = 100; // Adjust the logo height as desired
+        const xPosition = (canvas.width - logoWidth) / 2;
+        const yPosition = 20; // Top padding for the logo
+
+        ctx.drawImage(logo, xPosition, yPosition, logoWidth, logoHeight);
+
         ctx.fillStyle = '#000000';
         ctx.font = '20px Arial';
   
         const priceText = priceCheck ? `Price: ${this.newJuteBagPrice}/-` : `Price: ${this.bagPrice}/-`;
-        ctx.fillText(priceText, 10, 50);
+        ctx.fillText(priceText, 10, logoHeight + 40);
   
         const maxWidth = canvas.width - 20;
         const lineHeight = 25;
   
         // Reset bagDescription and create new description content
-        this.bagDescription = `Description: ${this.pricingForm.value.width}w x ${this.pricingForm.value.height}h x ${this.pricingForm.value.gusset}g ${this.pricingForm.value.color} jute bag contains the following elements.\n`;
+        this.bagDescription = `Description: ${this.pricingForm.value.width}w x ${this.pricingForm.value.height}h x ${this.pricingForm.value.gusset}g (in inches) ${this.pricingForm.value.color} jute bag contains the following elements.\n`;
   
         const totalBill = this.newJuteBagPrice * this.newBagQuantity;
         const advanceAmount = totalBill / 2;
@@ -548,8 +561,15 @@ export class ExploreContainerComponent implements OnInit {
           Quantity: ${this.newBagQuantity}
           Total Amount: ${totalBill}/-
           Advance Amount (50%): ${advanceAmount}/-
+
+          PhonePe/Gpay :  +91 9771611778 (Pickup Eco Products)
+          ACC  : 7286028804 
+          IFSC : IDIB000B021
+          Bank : Indian Bank
   
-          Please pay the advance amount to confirm your order. After your payment, we will add your order to the lineup.
+          Please pay the advance amount to confirm your order. After your payment, we will add your order to our lineup.
+
+          Delivery : Once bags are completed we will calculate the exact weight. Based on the weight, Transport charges and Balance 50% has to be paid before disptaching your order.
   
           Important: Please share a screenshot after the payment.
         `;
@@ -577,7 +597,7 @@ export class ExploreContainerComponent implements OnInit {
 
         console.log("Bag Description ", this.bagDescription);
         // Draw the text on the canvas with proper alignment
-        this.wrapText(ctx, this.bagDescription, 10, 100, maxWidth, lineHeight);
+        this.wrapText(ctx, this.bagDescription, 10, logoHeight + 100, maxWidth, lineHeight);
   
         const dataUrl = canvas.toDataURL('image/png', 1.0);
         const base64Data = dataUrl.split(',')[1];
@@ -594,6 +614,8 @@ export class ExploreContainerComponent implements OnInit {
   
         const displayUri = Capacitor.convertFileSrc(result.uri);
         console.log('Display URI:', displayUri);
+
+        }
       }
     } catch (error) {
       console.error('Error saving image', error);
@@ -609,18 +631,32 @@ export class ExploreContainerComponent implements OnInit {
       if (ctx) {
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-  
+
+        // Load the logo image
+        const logo = new Image();
+        logo.src = 'assets/icon/logo.png'; // Update this path to where your logo is located
+
+        logo.onload = async() => {
+
+        // Draw the logo in the center at the top
+        const logoWidth = 100; // Adjust the logo width as desired
+        const logoHeight = 100; // Adjust the logo height as desired
+        const xPosition = (canvas.width - logoWidth) / 2;
+        const yPosition = 20; // Top padding for the logo
+
+        ctx.drawImage(logo, xPosition, yPosition, logoWidth, logoHeight);
+
         ctx.fillStyle = '#000000';
         ctx.font = '20px Arial';
   
         const priceText = priceCheck ? `Price: ${this.newJuteBagPrice}/-` : `Price: ${this.bagPrice}/-`;
-        ctx.fillText(priceText, 10, 50);
+        ctx.fillText(priceText, 10, logoHeight + 40);
   
         const maxWidth = canvas.width - 20;
         const lineHeight = 25;
   
         // Reset bagDescription and create new description content
-        this.bagDescription = `Description: ${this.pricingForm.value.width}w x ${this.pricingForm.value.height}h x ${this.pricingForm.value.gusset}g ${this.pricingForm.value.color} jute bag contains the following elements.\n`;
+        this.bagDescription = `Description: ${this.pricingForm.value.width}w x ${this.pricingForm.value.height}h x ${this.pricingForm.value.gusset}g (in inches) ${this.pricingForm.value.color} jute bag contains the following elements.\n`;
   
         const totalBill = this.newJuteBagPrice * this.newBagQuantity;
         const advanceAmount = totalBill / 2;
@@ -630,8 +666,15 @@ export class ExploreContainerComponent implements OnInit {
           Quantity: ${this.newBagQuantity}
           Total Amount: ${totalBill}/-
           Advance Amount (50%): ${advanceAmount}/-
+
+          PhonePe/Gpay :  +91 9771611778 (Pickup Eco Products)
+          ACC  : 7286028804 
+          IFSC : IDIB000B021
+          Bank : Indian Bank
   
-          Please pay the advance amount to confirm your order. After your payment, we will add your order to the lineup.
+          Please pay the advance amount to confirm your order. After your payment, we will add your order to our lineup.
+
+          Delivery : Once bags are completed we will calculate the exact weight. Based on the weight, Transport charges and Balance 50% has to be paid before disptaching your order.
   
           Important: Please share a screenshot after the payment.
         `;
@@ -650,7 +693,7 @@ export class ExploreContainerComponent implements OnInit {
         `;
   
         // Append the cleaned price quote
-        this.bagDescription += `\n\n${cleanedString}`;
+        this.bagDescription += `\n${cleanedString}`;
 
         this.bagDescription = this.bagDescription
         .split('\n') // Split by new line
@@ -658,7 +701,7 @@ export class ExploreContainerComponent implements OnInit {
         .join('\n'); // Join the lines back with new lines
   
         // Draw the text on the canvas with proper alignment
-        this.wrapText(ctx, this.bagDescription, 10, 100, maxWidth, lineHeight);
+        this.wrapText(ctx, this.bagDescription, 10, logoHeight + 100, maxWidth, lineHeight);
   
         const dataUrl = canvas.toDataURL('image/png');
         const response = await fetch(dataUrl);
@@ -680,6 +723,9 @@ export class ExploreContainerComponent implements OnInit {
           files: [fileUri],
           dialogTitle: 'Share with...'
         });
+
+        }
+        
       }
     } catch (error) {
       console.error('Error sharing image:', error);

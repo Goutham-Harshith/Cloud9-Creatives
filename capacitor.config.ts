@@ -7,11 +7,24 @@ const config: CapacitorConfig = {
   bundledWebRuntime: false,
   plugins: {
     SplashScreen: {
-      launchShowDuration: 0, // Disable default splash screen
-      showSpinner: false, // Disables any spinner that may appear
-      androidSplashResourceName: '', // Ensures no default splash icon on Android
+      launchShowDuration: 1000,
+      launchAutoHide: true,
+      launchFadeOutDuration: 0,
+      backgroundColor: "#FFFFFF",
+      androidSplashResourceName: "splash",
+      androidScaleType: "FIT_CENTER",
+      showSpinner: true,
+      androidSpinnerStyle: "large",
+      iosSpinnerStyle: "small",
+      spinnerColor: "#c12727",  
+      splashFullScreen: false,
+      splashImmersive: false,
+      layoutName: "launch_screen",
+      useDialog: false,
     }
   }
 };
 
 export default config;
+
+
