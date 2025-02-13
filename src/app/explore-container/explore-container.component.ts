@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, OnInit, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { AlertController, IonModal, ModalController, ToastController } from '@ionic/angular';
 import { Share } from '@capacitor/share';
 import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
@@ -149,6 +149,7 @@ export class ExploreContainerComponent implements OnInit {
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private modalController: ModalController, private toastController: ToastController, private alertController: AlertController ) { }
 
   ngOnInit() {
+    this.initAllForms();
     this.route.queryParams.subscribe(params => {
       this.isAlertOpen = false;
       this.selectedTab = params['tab'];
@@ -169,20 +170,35 @@ export class ExploreContainerComponent implements OnInit {
         }
       })
     });
+  }
 
+  ngAfterViewInit() {
+    // Listen to navigation changes
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        console.log('Navigation occurred, performing actions...');
+        this.initAllForms();
+        if (this.priceList.discountCheck) {
+          this.pricingForm.get('branding')?.disable();
+        }
+      }
+    });
+  }
+
+  initAllForms() {
     // Initialize the form
     this.pricingForm = this.fb.group({
       width: ['10', Validators.required],
       height: ['6', Validators.required],
       gusset: ['5', Validators.required],
-      branding: [false, Validators.required],
+      branding: [false],
       zip: ['zip', Validators.required],
       color: ['white', Validators.required],
       quality: ['14x15', Validators.required],
       handle: ['whiteRope', Validators.required],
       print: ['single', Validators.required],
     });
-
+    
     // Initialize the form
     this.paperPricingForm = this.fb.group({
       bagSize: ['mini', Validators.required],
@@ -268,6 +284,19 @@ export class ExploreContainerComponent implements OnInit {
           fabricPrice = this.priceList.natural12x12;
           descriptionText = descriptionText + `
           12x12 quality`;
+        }
+        break;
+
+      case 'white and natural combination':
+        if (formValue.quality === '14x15') {
+          fabricPrice = this.priceList.white14x15;
+          descriptionText = `
+            14x15 quality`;
+        }
+        else {
+          fabricPrice = this.priceList.white12x12;
+          descriptionText = descriptionText + `
+            12x12 quality` ;
         }
         break;
     }
@@ -419,19 +448,32 @@ export class ExploreContainerComponent implements OnInit {
     this.alertInputs1[0].value = this.minOrderQuantity;
     this.alertInputs2[0].value = this.bagPrice;
     this.alertInputs2[1].value = this.minOrderQuantity;
-  
 
+    let priceList: any = localStorage.getItem("priceList");
+
+    let showMarginCheck =  JSON.parse(priceList);
+  
     setTimeout(()=>
     {
       const outputElement = document.getElementById("output");
       if (outputElement) {
-        const message = `Description : 
+        let  message = `Description : 
 
         ${width}w x ${height}h x ${gusset}g  ${formValue.color} jute bag contains the following elements.
-        ` + descriptionText + `
+        ` + descriptionText
+        
+        let margin = `
 
         Margin per bag is ${Math.floor(profit)}/-  (${marginPercent}) 
         `;
+
+        if(!showMarginCheck.hideSettings)
+        {
+          message = message + margin;
+        }
+
+        console.log("message : ", message);
+
         outputElement.innerHTML = message.replace(/\n/g, "<br>");
 
         // Split the string into lines, trim spaces, and join them back
@@ -440,6 +482,7 @@ export class ExploreContainerComponent implements OnInit {
           .map(line => line.trim()) // Trim spaces from each line
           .join('\n'); // Join the lines back with new lines
 
+          console.log("cleaned string : ", cleanedString)
 
           this.bagDescription = `${width}w x ${height}h x ${gusset}g  ${formValue.color} jute bag contains the following elements.
           ${cleanedString}`;
@@ -603,7 +646,7 @@ export class ExploreContainerComponent implements OnInit {
         const base64Data = dataUrl.split(',')[1];
   
         const result = await Filesystem.writeFile({
-          path: 'bag_price.png',
+          path: `bag_price-${Date.now()}.png`,
           data: base64Data,
           directory: Directory.Documents,
           recursive: true,
@@ -757,24 +800,43 @@ export class ExploreContainerComponent implements OnInit {
         let gussetWidth = Number(this.pricingForm.value.gusset) + 2.5;
 
         let zipWidth =  width - 1;
-        let zipHeight =  Number(this.pricingForm.value.gusset) + 1
+        let zipHeight =  Number(this.pricingForm.value.gusset) + 1;
+
+        let fbColour;
+        let gussetColor;
+        let zipColor;
+
+        if(this.pricingForm.value.color == 'white and natural combination')
+        {
+          fbColour = 'white';
+          gussetColor ='natural';
+          zipColor = 'white';
+        }
+        else
+        {
+          fbColour = this.pricingForm.value.color;
+          gussetColor = this.pricingForm.value.color;
+          zipColor = this.pricingForm.value.color;
+        }
 
         bagDescription +=  `
-        Bag Count : ${this.newBagQuantity} bags
-        Color     : ${this.pricingForm.value.color}
-        Quality   : ${this.pricingForm.value.quality}
+        Bag Count   : ${this.newBagQuantity} bags
+        Color       : ${this.pricingForm.value.color}
+        Quality     : ${this.pricingForm.value.quality}
+        Handle type : ${this.pricingForm.value.handle}
+        Print       : ${this.pricingForm.value.print}
 
-        ${width} x ${height} ${this.newBagQuantity * 2}pcs\n
+        ${width} x ${height} ${this.newBagQuantity * 2}pcs  ${fbColour} \n
         ${this.generateMultiplicationTable(width)}
         ${this.generateMultiplicationTable(height)}
 
-        ${gussetHeight} x ${gussetWidth} ${this.newBagQuantity}pcs\n
+        ${gussetHeight} x ${gussetWidth} ${this.newBagQuantity}pcs   ${gussetColor}  \n
         ${this.generateMultiplicationTable(gussetHeight)}
         ${this.generateMultiplicationTable(gussetWidth)} \n`
 
         if (this.pricingForm.value.zip == 'zip') {
           bagDescription += `
-        ${zipWidth} x ${zipHeight} ${this.newBagQuantity}pcs\n
+        ${zipWidth} x ${zipHeight} ${this.newBagQuantity}pcs   ${zipColor} \n
         ${this.generateMultiplicationTable(zipWidth)}
         ${this.generateMultiplicationTable(zipHeight)}`
         }
@@ -950,7 +1012,7 @@ export class ExploreContainerComponent implements OnInit {
     let table = '';
 
     for (let i = 1; i <= 15; i++) {
-      table += `${number * i} `;
+      table += `${number * i}  `;
     }
 
     return table.trim(); // Remove any trailing whitespace

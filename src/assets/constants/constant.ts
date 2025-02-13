@@ -20,7 +20,8 @@ export const APP_CONSTANTS = {
     miscellaneous: '',
     mini: '',
     small: '',
-    medium:''
+    medium:'',
+    hideSettings: false
 };
 
 // Example of using a type for your constants

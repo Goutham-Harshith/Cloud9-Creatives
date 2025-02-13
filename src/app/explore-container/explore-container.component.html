@@ -60,6 +60,7 @@
             <ion-select placeholder="Select one" labelPlacement="fixed" formControlName="color">
               <ion-select-option value="white">White</ion-select-option>
               <ion-select-option value="natural">Natural</ion-select-option>
+              <ion-select-option value="white and natural combination">Combination</ion-select-option>
             </ion-select>
           </ion-item>
           <ion-item>
@@ -190,7 +191,7 @@
               </ion-button>
               
               <!-- Canvas element to generate image -->
-              <canvas id="canvas" width="800" height="800" style="display:none;"></canvas>
+              <canvas id="canvas" width="800" height="1000" style="display:none;"></canvas>
 
              </div>
             <h1 class="final-price">Price : {{bagPrice}}/-</h1>

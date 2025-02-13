@@ -89,22 +89,33 @@
 
     </ion-list>
 
-    <h1 class="mx-3"> Paper bags weight </h1>
+    <h1 class="mx-3"> Paper bags weight in grams</h1>
     <ion-list>
 
       <ion-item>
-        <ion-input label="Mini" placeholder="enter value" type="number" (keyup)="saveChanges()" [(ngModel)]="priceList.mini"></ion-input>
+        <ion-input label="Mini : " placeholder="enter value" type="number" (keyup)="saveChanges()" [(ngModel)]="priceList.mini"></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-input label="Small" placeholder="enter value" type="number" (keyup)="saveChanges()" [(ngModel)]="priceList.small"></ion-input>
+        <ion-input label="Small : " placeholder="enter value" type="number" (keyup)="saveChanges()" [(ngModel)]="priceList.small"></ion-input>
       </ion-item>
 
       <ion-item>
-        <ion-input label="Medium" placeholder="enter value" type="number" (keyup)="saveChanges()" [(ngModel)]="priceList.medium"></ion-input>
+        <ion-input label="Medium : " placeholder="enter value" type="number" (keyup)="saveChanges()" [(ngModel)]="priceList.medium"></ion-input>
       </ion-item>
 
     </ion-list>
+
+    <h1 class="mx-3"> Enable options</h1>
+    <ion-list>
+
+      <ion-item>
+        <ion-label>Hide Settings</ion-label>              
+        <ion-toggle (ionChange)="saveChanges();" [(ngModel)]="priceList.hideSettings" ></ion-toggle> 
+      </ion-item>
+
+    </ion-list>
+
   </div>
 
 </ion-content>

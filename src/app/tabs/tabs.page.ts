@@ -8,8 +8,13 @@ import { Component } from '@angular/core';
 export class TabsPage {
 
   public isDarkMode: boolean = false;
+  hideSettings: boolean = true;
   
   constructor() {
+    let priceList: any = localStorage.getItem("priceList");
+    let settingCheck = JSON.parse(priceList);
+    this.hideSettings = settingCheck.hideSettings;
+    console.log()
     let localMode = localStorage.getItem('darkMode');
     this.isDarkMode = localMode == "true" ?  true : false;
     if (this.isDarkMode) {
@@ -57,6 +62,11 @@ export class TabsPage {
     
     // Load the appropriate theme on initialization
     this.loadTheme(this.isDarkMode ? 'dark' : 'light');
+  }
+
+  navigateToSettings()
+  {
+      console.log("price : ", this.hideSettings)
   }
 
 }
