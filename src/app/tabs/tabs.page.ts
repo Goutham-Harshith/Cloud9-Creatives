@@ -1,4 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
+import { Router } from '@angular/router';
+import { IonModal, ToastController } from '@ionic/angular';
+import { OverlayEventDetail } from '@ionic/core/components';
 
 @Component({
   selector: 'app-tabs',
@@ -7,13 +10,15 @@ import { Component } from '@angular/core';
 })
 export class TabsPage {
 
+  @ViewChild(IonModal) modal!: IonModal;
   public isDarkMode: boolean = false;
   hideSettings: boolean = true;
+  securityPassword: string = '';
   
-  constructor() {
+  constructor(private toastController: ToastController, private router: Router) {
     let priceList: any = localStorage.getItem("priceList");
     let settingCheck = JSON.parse(priceList);
-    this.hideSettings = settingCheck.hideSettings;
+    this.hideSettings = settingCheck?.hideSettings;
     console.log()
     let localMode = localStorage.getItem('darkMode');
     this.isDarkMode = localMode == "true" ?  true : false;
@@ -67,6 +72,63 @@ export class TabsPage {
   navigateToSettings()
   {
       console.log("price : ", this.hideSettings)
+  }
+
+  cancel() {
+    this.modal.dismiss(null, 'cancel');
+    this.securityPassword = '';
+  }
+
+  confirm() {
+    if(this.securityPassword != "Test@123")
+    {
+      this.errorToastr();
+      return;
+    }
+    this.modal.dismiss(null, 'cancel');
+    this.successToastr();
+    this.router.navigate(['/dashboard/pricing']); // Change the route accordingly
+  }
+
+  onWillDismiss(event: CustomEvent<OverlayEventDetail>) {
+    console.log("dismissed ");
+    this.securityPassword = '';
+  }
+
+  async errorToastr() {
+    const toast = await this.toastController.create({
+      message: 'Wrong password please try again',
+      duration: 1500,
+      position: 'top',
+      swipeGesture: 'vertical',
+      color: 'danger'
+    });
+
+    await toast.present();
+  }
+
+  async successToastr() {
+    const toast = await this.toastController.create({
+      message: 'Success',
+      duration: 1500,
+      position: 'top',
+      swipeGesture: 'vertical',
+      color: 'success',
+      cssClass: 'toast-top-right',
+      animated: true,
+      icon: "checkmark-circle-outline",
+      buttons: [
+        {
+          icon: 'close', // Add dismiss icon here (Ionicons, e.g., 'close' or 'close-circle')
+          role: 'cancel', // Defines a "cancel" role that dismisses the toast
+          handler: () => {
+            console.log('Toast dismissed');
+          }
+        }
+      ]
+    });
+
+    await toast.present();
   }
 
 }

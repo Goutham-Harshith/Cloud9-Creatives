@@ -22,12 +22,13 @@ export class ExploreContainerComponent implements OnInit {
   alertButtons = ['Go to settings'];
   @ViewChild(IonModal) modal: any;
   bagPrice: any = '';
-  minOrderQuantity: number = 20;
+  minOrderQuantity: number = 30;
   bagDescription: string = ''
   paperBagDescription: string = ''
   paperBagWeight: any;
   newJuteBagPrice : number = 0;
   newBagQuantity: number = 0;
+  newBagNotes: string = '';
   disableShare: boolean = false;
 
   alertButtonsForPrice = [
@@ -58,6 +59,7 @@ export class ExploreContainerComponent implements OnInit {
       handler: (inputData: any) => {
         console.log('Alert confirmed with price:', inputData);
         this.newBagQuantity = Number(inputData['quantity']);
+        this.newBagNotes =  inputData['notes'];
         this.downloadAndShareDimensions(true);
       },
     },
@@ -123,6 +125,13 @@ export class ExploreContainerComponent implements OnInit {
       value: this.minOrderQuantity,
       min: 20,
       max: 100000,
+    },
+    {
+      name: 'notes',
+      type: 'text' as const,
+      placeholder: 'leave nodes',
+      label: 'notes',
+      value: "",
     },
   ];
 
@@ -823,8 +832,9 @@ export class ExploreContainerComponent implements OnInit {
         Bag Count   : ${this.newBagQuantity} bags
         Color       : ${this.pricingForm.value.color}
         Quality     : ${this.pricingForm.value.quality}
-        Handle type : ${this.pricingForm.value.handle}
+        Handle      : ${this.getHandleDescription(this.pricingForm.value.handle)}
         Print       : ${this.pricingForm.value.print}
+        Notes       : ${this.newBagNotes}
 
         ${width} x ${height} ${this.newBagQuantity * 2}pcs  ${fbColour} \n
         ${this.generateMultiplicationTable(width)}
@@ -965,6 +975,11 @@ export class ExploreContainerComponent implements OnInit {
     });
   
     await alert.present();
+  }
+
+  // get the pricing based on the quantity.
+  async getPricing() {
+    
   }
 
   getPrintDescription(printType: string): string {

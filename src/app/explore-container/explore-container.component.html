@@ -189,6 +189,15 @@
                   <ion-icon name="cut-outline"></ion-icon>
                 </ng-template>
               </ion-button>
+
+              <ion-button title="get quotes"  disabled>
+                <ng-container *ngIf="disableShare; else showCal">
+                  <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
+                </ng-container>
+                <ng-template #showCal>
+                  <ion-icon name="calculator-outline"></ion-icon>
+                </ng-template>
+              </ion-button>
               
               <!-- Canvas element to generate image -->
               <canvas id="canvas" width="800" height="1000" style="display:none;"></canvas>
