@@ -36,7 +36,7 @@ ion-item {
 }
 
 h1 {
-  text-align: center;        /* Center title */
+  text-align: left;        /* Center title */
   margin-bottom: 20px;       /* Space below heading */
 }
 
@@ -96,4 +96,14 @@ h1 {
 .small-spinner {
   width: 20px;
   height: 20px;
+}
+
+.d-flex
+{
+  display: flex;
+}
+
+.justify-content-end
+{
+  justify-content: end;
 }

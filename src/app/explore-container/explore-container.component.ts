@@ -28,8 +28,11 @@ export class ExploreContainerComponent implements OnInit {
   paperBagWeight: any;
   newJuteBagPrice : number = 0;
   newBagQuantity: number = 0;
+  customerNumber: any = '';
   newBagNotes: string = '';
   disableShare: boolean = false;
+  normalJutePrice: any;
+  bulkJutePrice: any;
 
   alertButtonsForPrice = [
     {
@@ -60,6 +63,7 @@ export class ExploreContainerComponent implements OnInit {
         console.log('Alert confirmed with price:', inputData);
         this.newBagQuantity = Number(inputData['quantity']);
         this.newBagNotes =  inputData['notes'];
+        this.customerNumber =  inputData['number'];
         this.downloadAndShareDimensions(true);
       },
     },
@@ -86,6 +90,25 @@ export class ExploreContainerComponent implements OnInit {
     },
     {
       text: 'Cancel',
+      role: 'Same price',
+      cssClass: 'danger-button',
+      handler: () => {
+        // this.downloadImage(false);
+      },
+    },
+  ];
+
+  alertButtonsForPrice3 = [
+    {
+      text: 'Get Price',
+      role: 'confirm',
+      handler: (inputData: any) => {
+        console.log('Alert confirmed with price:', inputData);
+        this.showUpdatedAlert(inputData.quantity);
+      },
+    },
+    {
+      text: 'Close',
       role: 'Same price',
       cssClass: 'danger-button',
       handler: () => {
@@ -127,6 +150,13 @@ export class ExploreContainerComponent implements OnInit {
       max: 100000,
     },
     {
+      name: 'number',
+      type: 'text' as const,
+      placeholder: 'Enter mobile number',
+      label: 'number',
+      value: "",
+    },
+    {
       name: 'notes',
       type: 'text' as const,
       placeholder: 'leave nodes',
@@ -153,6 +183,18 @@ export class ExploreContainerComponent implements OnInit {
       min: 20,
       max: 100000,
     },
+  ];
+
+  public alertInputs3 = [
+    {
+      name: 'quantity',
+      type: 'number' as const,
+      placeholder: 'Enter quantity',
+      label: 'Quanity',
+      value: this.minOrderQuantity,
+      min: 20,
+      max: 100000,
+    }
   ];
 
   constructor(private route: ActivatedRoute, private fb: FormBuilder, private router: Router, private modalController: ModalController, private toastController: ToastController, private alertController: AlertController ) { }
@@ -268,6 +310,7 @@ export class ExploreContainerComponent implements OnInit {
     let bagCountPerMeter = Math.floor( (1800/totalFabric)* 10) / 10;
     let fabricPrice;
     
+    console.log("Total Fabric price : ", totalFabric);
 
     switch (formValue.color) {
       case 'white':
@@ -341,7 +384,9 @@ export class ExploreContainerComponent implements OnInit {
     }
 
     let totalPrice = fabricCostPerBag + labourCost + machineDip + current + thread + miscellaneous;
-    
+
+    console.log("small bag price ", totalPrice, labourCost);
+
     switch(formValue.print)
     {
       case 'single':
@@ -431,7 +476,7 @@ export class ExploreContainerComponent implements OnInit {
     // descriptionText = descriptionText + `
     // ${priceQuote}`;
 
-    console.log('***** Total Price *********', totalPrice);
+    console.log('***** Total Price *********', totalPrice, );
 
     let profit;
     if(formValue.branding)
@@ -510,6 +555,192 @@ export class ExploreContainerComponent implements OnInit {
     console.log("Bag Count : ", bagCountPerMeter);
     console.log("fabric price : ", fabricCostPerBag);
     console.log("bag price : ", totalPrice);
+
+    this.quantityBasedJutePricing();
+
+  }
+
+  // get quote based on quantity
+  quantityBasedJutePricing()
+  {
+    this.bagDescription = '';
+    let isSmallBag =  false;
+    let formValue =  this.pricingForm.value;
+    let height =  Number(formValue.height);
+    let width = Number(formValue.width);
+    let gusset =  Number(formValue.gusset);
+    let level1 =  ((height + 0.5) * width)*2;
+    let level2 =  ((height + 0.5) + width + (height + 0.5))* (gusset + 2.5);
+    let level3 = (width - 1)* ( gusset + 1);
+    isSmallBag = (Math.ceil(level1) + Math.ceil(level2)) < 300 ? true : false;
+
+    let totalFabric =  Math.ceil(level1) + Math.ceil(level2);
+
+    if(formValue.zip == 'zip')
+    {
+      totalFabric = totalFabric + Math.ceil(level3);
+    }
+
+    let bagCountPerMeter = Math.floor( (1800/totalFabric)* 10) / 10;
+    let fabricPrice;
+
+    console.log("Total Fabric price : ", totalFabric);
+    
+    switch (formValue.color) {
+      case 'white':
+        if (formValue.quality === '14x15') {
+          fabricPrice = this.priceList.white14x15;
+        }
+        else {
+          fabricPrice = this.priceList.white12x12;
+        }
+        break;
+
+      case 'natural':
+        if (formValue.quality === '14x15') {
+          fabricPrice = this.priceList.natural14x15;
+        }
+        else {
+          fabricPrice = this.priceList.natural12x12;
+        }
+        break;
+
+      case 'white and natural combination':
+        if (formValue.quality === '14x15') {
+          fabricPrice = this.priceList.white14x15;
+        }
+        else {
+          fabricPrice = this.priceList.white12x12;
+        }
+        break;
+    }
+
+    let fabricCostPerBag =  fabricPrice/bagCountPerMeter;
+    let profitPercentage = 0.65 ;
+    let profitPercentageBranding = 0.5;
+    let labourCost = this.priceList.labour;
+    let machineDip =  this.priceList.machineDip;
+    let current =  this.priceList.current;
+    let thread =  this.priceList.thread;
+    let naturalHandle =  this.priceList.naturalHandle;
+    let whiteHandle =  this.priceList.whiteHandle;
+    let naturalInnerRope =  this.priceList.naturalInnerRope;
+    let whiteInnerRope =  this.priceList.whiteInnerRope;
+    let dhori =  this.priceList.Dhori;
+    let juteHandle =  this.priceList.juteHandle;
+    let zip =  this.priceList.zip;
+    let velcro = this.priceList.velcro
+    let print =  this.priceList.print;
+    let doublePrint =  this.priceList.doublePrint;
+    let miscellaneous = this.priceList.miscellaneous;
+
+    // bulk checks here
+    let bulkPrint =  5;
+    let bulkDoublePrint =  10;
+
+    //small size labour cost
+    let smallBagLaboutCost = 15;
+
+    let totalPrice = fabricCostPerBag + labourCost + machineDip + current + thread + miscellaneous;
+
+    let bulkTotalPrice = fabricCostPerBag + labourCost + machineDip + current + thread + miscellaneous;
+
+    if(isSmallBag)
+    {
+      totalPrice = fabricCostPerBag + smallBagLaboutCost + machineDip + current + thread + miscellaneous;
+      bulkTotalPrice = fabricCostPerBag + smallBagLaboutCost + machineDip + current + thread + miscellaneous;
+    }
+
+    console.log("small bag price : ", totalPrice, bulkTotalPrice, smallBagLaboutCost)
+
+    switch(formValue.print)
+    {
+      case 'single':
+        if (isSmallBag) {
+          totalPrice = totalPrice + bulkPrint;
+          break;
+        }
+        totalPrice =  totalPrice + print;
+        bulkTotalPrice = bulkTotalPrice + bulkPrint;
+
+        break;
+      case "double":
+        if (isSmallBag) {
+          totalPrice = totalPrice + bulkDoublePrint;
+          break;
+        }
+        totalPrice =  totalPrice + doublePrint;
+        bulkTotalPrice = bulkTotalPrice + bulkDoublePrint;
+        break;
+      case 'plain':
+        break;
+    }
+
+
+    switch (formValue.handle) {
+      case "naturalTape":
+        totalPrice = totalPrice + naturalHandle;
+        bulkTotalPrice =  bulkTotalPrice + naturalHandle;
+        break;
+      case "whiteTape":
+        totalPrice = totalPrice + whiteHandle;
+        bulkTotalPrice =  bulkTotalPrice + whiteHandle
+        ;
+        break;
+      case 'naturalRope':
+        totalPrice = totalPrice + naturalInnerRope;
+        bulkTotalPrice =  bulkTotalPrice + naturalInnerRope;
+        break;
+      case "whiteRope":
+        totalPrice = totalPrice + whiteInnerRope;
+        bulkTotalPrice =  bulkTotalPrice + whiteInnerRope;
+        break;
+      case 'dhori':
+        totalPrice = totalPrice + dhori;
+        bulkTotalPrice =  bulkTotalPrice + dhori;
+        break;
+      case "juteHandle":
+        totalPrice = totalPrice + juteHandle;
+        bulkTotalPrice =  bulkTotalPrice + juteHandle;
+        break;
+    }
+
+    switch (formValue.zip) {
+      case "zip":
+        totalPrice = totalPrice + zip;
+        bulkTotalPrice =  bulkTotalPrice + zip;
+        break;
+      case "velcro":
+        totalPrice = totalPrice + velcro;
+        bulkTotalPrice =  bulkTotalPrice + velcro;
+        break;
+      case 'none':
+        totalPrice = totalPrice;
+        bulkTotalPrice =  bulkTotalPrice;
+        break;
+    }
+
+    let normalProfit;
+    let bulkProfit;
+
+    bulkProfit = bulkTotalPrice * profitPercentageBranding;
+    normalProfit = totalPrice * profitPercentage;
+
+    if(bulkProfit < 20)
+    {
+      bulkProfit = 20;
+    }
+
+    if(normalProfit < 20)
+    {
+      normalProfit = 20;
+    }
+
+    let normalJutePrice = Math.ceil(totalPrice + normalProfit);
+    let bulkJutePrice = Math.ceil(bulkTotalPrice + bulkProfit);
+
+    this.normalJutePrice  = Math.floor(normalJutePrice);
+    this.bulkJutePrice = Math.floor(bulkJutePrice);
 
   }
 
@@ -834,6 +1065,7 @@ export class ExploreContainerComponent implements OnInit {
         Quality     : ${this.pricingForm.value.quality}
         Handle      : ${this.getHandleDescription(this.pricingForm.value.handle)}
         Print       : ${this.pricingForm.value.print}
+        Mobile no   : ${this.customerNumber}
         Notes       : ${this.newBagNotes}
 
         ${width} x ${height} ${this.newBagQuantity * 2}pcs  ${fbColour} \n
@@ -979,7 +1211,14 @@ export class ExploreContainerComponent implements OnInit {
 
   // get the pricing based on the quantity.
   async getPricing() {
-    
+    const alert = await this.alertController.create({
+      header: `Normal : ${this.normalJutePrice}, Bulk : ${this.bulkJutePrice}`,
+      inputs: this.alertInputs3, // Use dynamically updated inputs
+      buttons: this.alertButtonsForPrice3,
+      backdropDismiss: false,
+    });
+  
+    await alert.present();
   }
 
   getPrintDescription(printType: string): string {
@@ -1032,6 +1271,34 @@ export class ExploreContainerComponent implements OnInit {
 
     return table.trim(); // Remove any trailing whitespace
   }
+
+// Function to show updated alert with price as sub-header
+async showUpdatedAlert(quantity: number) {
+  let priceDiff = this.normalJutePrice -  this.bulkJutePrice;
+  let priceForHundread = priceDiff/5;
+  let discountRatio = 0;
+
+  if(quantity >= 100)
+  {
+      discountRatio = quantity/100;
+  }
+
+  let discount = priceForHundread * discountRatio;
+  let finalBagPrice = Math.ceil(this.normalJutePrice -  discount);
+  
+  const alert = await this.alertController.create({
+    subHeader: `The best price for ${quantity} jute bags is ${finalBagPrice}rs`,
+    buttons: [
+      {
+        text: 'Close',
+        role: 'cancel',
+      },
+    ],
+    backdropDismiss: false,
+  });
+
+  await alert.present();
+}
   
   
   

@@ -4,6 +4,7 @@
   message="Data is insufficient, you have to fill the settings form first." [buttons]="alertButtons"
   (didDismiss)="setOpen(false)" cssClass="custom-alert" [backdropDismiss]="false"></ion-alert>
 
+
     <div class="paperContent" *ngIf="selectedTab === 'paper' ">
       <h1 class="mx-3">  Weight calculator</h1>
       <form [formGroup]="paperPricingForm" (ngSubmit)="onPaperSubmit()"> <!-- Bind FormGroup here -->
@@ -162,48 +163,53 @@
         <ion-content class="ion-padding">
           <div class="result-container">
             <!-- Final Price as Heading -->
-             <div class="float-end">
-              <ion-button title="share quote" (click)="sharePricesForm()" [disabled]="disableShare">
-                <ng-container *ngIf="disableShare; else showShare">
-                  <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
-                </ng-container>
-                <ng-template #showShare>
-                  <ion-icon name="share-social-outline" title="share quote"></ion-icon>
-                </ng-template>
-              </ion-button>
-
-              <ion-button title="download quote" (click)="downloadPricesForm()" [disabled]="disableShare">
-                <ng-container *ngIf="disableShare; else showdownload">
-                  <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
-                </ng-container>
-                <ng-template #showdownload>
-                  <ion-icon name="download-outline" title="donwload quote" ></ion-icon>
-                </ng-template>
-              </ion-button>
-
-              <ion-button title="share shape"  (click)="shareBagDimensions()" [disabled]="disableShare">
-                <ng-container *ngIf="disableShare; else showShape">
-                  <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
-                </ng-container>
-                <ng-template #showShape>
-                  <ion-icon name="cut-outline"></ion-icon>
-                </ng-template>
-              </ion-button>
-
-              <ion-button title="get quotes"  disabled>
-                <ng-container *ngIf="disableShare; else showCal">
-                  <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
-                </ng-container>
-                <ng-template #showCal>
-                  <ion-icon name="calculator-outline"></ion-icon>
-                </ng-template>
-              </ion-button>
-              
-              <!-- Canvas element to generate image -->
-              <canvas id="canvas" width="800" height="1000" style="display:none;"></canvas>
-
+             <div class="d-flex justify-content-end row">
+              <div class="float-end">
+                <ion-button title="share quote" (click)="sharePricesForm()" [disabled]="disableShare" *ngIf="!priceList?.hideSettings">
+                  <ng-container *ngIf="disableShare; else showShare">
+                    <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
+                  </ng-container>
+                  <ng-template #showShare>
+                    <ion-icon name="share-social-outline" title="share quote"></ion-icon>
+                  </ng-template>
+                </ion-button>
+  
+                <ion-button title="download quote" (click)="downloadPricesForm()" [disabled]="disableShare" *ngIf="!priceList?.hideSettings">
+                  <ng-container *ngIf="disableShare; else showdownload">
+                    <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
+                  </ng-container>
+                  <ng-template #showdownload>
+                    <ion-icon name="download-outline" title="donwload quote" ></ion-icon>
+                  </ng-template>
+                </ion-button>
+  
+                <ion-button title="share shape"  (click)="shareBagDimensions()" [disabled]="disableShare">
+                  <ng-container *ngIf="disableShare; else showShape">
+                    <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
+                  </ng-container>
+                  <ng-template #showShape>
+                    <ion-icon name="cut-outline"></ion-icon>
+                  </ng-template>
+                </ion-button>
+  
+                <ion-button title="get quotes" (click)="getPricing()" [disabled]="disableShare">
+                  <ng-container *ngIf="disableShare; else showCal">
+                    <ion-spinner name="crescent" class="small-spinner"></ion-spinner>
+                  </ng-container>
+                  <ng-template #showCal>
+                    <ion-icon name="calculator-outline"></ion-icon>
+                  </ng-template>
+                </ion-button>
+                
+                <!-- Canvas element to generate image -->
+                <canvas id="canvas" width="800" height="1000" style="display:none;"></canvas>
+  
+               </div>
              </div>
-            <h1 class="final-price">Price : {{bagPrice}}/-</h1>
+
+             <div class="row">
+              <h1 class="final-price">Price : {{bagPrice}}/-</h1>
+             </div>
             
             <!-- Description Below the Price -->
             <p class="description" id="output">
