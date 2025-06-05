@@ -2,28 +2,61 @@
 
 <ion-content [fullscreen]="true" class="ion-padding-top">
   <div class="center-content" >
-    <ion-card class="card-width ion-activatable ripple-parent"  routerLink="/dashboard/explore" [queryParams]="{tab : 'paper'}">
+
+    <ion-card class="ripple-parent full-height-card" routerLink="/dashboard/explore" [queryParams]="{tab : 'paper'}">
       <ion-ripple-effect></ion-ripple-effect>
-      <img alt="Silhouette of mountains" width="100" height="100" src="assets/icon/paper_bag.jpeg" />
-      <ion-card-header>
-        <ion-card-title>Paper bags</ion-card-title>
-      </ion-card-header>
-    
-      <ion-card-content>
-        Paper bag weight can be calculated here
-      </ion-card-content>
+      <div class="card-content-row">
+        <div class="image-box">
+          <img alt="Paper bag image" width="130" height="150" src="assets/icon/paper_bag.png" />
+        </div>
+        <div class="text-box">
+          <ion-card-header>
+            <ion-card-title>Paper bags</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Paper bag weight can be calculated here
+          </ion-card-content>
+        </div>
+      </div>
     </ion-card>
-    <ion-card class="card-width ion-activatable ripple-parent" routerLink="/dashboard/explore" [queryParams]="{tab : 'jute'}">
+
+    <ion-card class="ripple-parent full-height-card" routerLink="/dashboard/explore" [queryParams]="{tab : 'jute'}">
       <ion-ripple-effect></ion-ripple-effect>
-      <img alt="Silhouette of mountains" width="100" height="100" src="assets/icon/jute_bag.png" />
-      <ion-card-header>
-        <ion-card-title>Jute bags</ion-card-title>
-      </ion-card-header>
-    
-      <ion-card-content>
-        Jute bag pricing can be done here
-      </ion-card-content>
+      <div class="card-content-row">
+        <div class="image-box">
+          <img alt="Jute bag image" width="130" height="150" src="assets/icon/jute_bag.png" />
+        </div>
+        <div class="text-box">
+          <ion-card-header>
+            <ion-card-title>Jute bags</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Jute bag pricing can be done here
+          </ion-card-content>
+        </div>
+      </div>
     </ion-card>
+
+
+    <ion-card class="ripple-parent full-height-card" routerLink="/dashboard/canvas" >
+      <ion-ripple-effect></ion-ripple-effect>
+      <div class="card-content-row">
+        <div class="image-box">
+          <img alt="Canvas bag image" width="130" height="150" src="assets/icon/canvas-bag.webp" />
+        </div>
+        <div class="text-box">
+          <ion-card-header>
+            <ion-card-title>Canvas bags</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Canvas bag pricing can be done here
+          </ion-card-content>
+        </div>
+      </div>
+    </ion-card>
+
+    
+    
   </div>
 
 </ion-content>

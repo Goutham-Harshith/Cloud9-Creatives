@@ -1,23 +1,45 @@
 .center-content {
     display: flex;
-    justify-content: center;  /* Centers horizontally */
+    justify-content: space-evenly;  /* Centers horizontally */
     align-items: center;      /* Centers vertically */
     height: 100%;             /* Ensure it takes the full height */
     flex-direction: column;   /* Stacks content vertically */
+    overflow: auto;
   }
 
 .card-width
 {
     cursor: pointer;
-    width: 50vw;
+    width: 80vw;
     display: flex;
     flex-direction: column;       /* Stack elements vertically */
     justify-content: center;      /* Center items horizontally */
     align-items: center;          /* Center items vertically */
-    height: 300px;                /* Optional: Set height to control vertical centering */
+    min-height: 165px;                /* Optional: Set height to control vertical centering */
     text-align: center;           /* Optional: Center text inside card */
 }
 
 ion-content {
   --padding-top: 56px; /* This assumes the height of the header is 56px */
+}
+
+.full-height-card {
+  height: 150px; /* or 100% if its parent allows it */
+  display: flex;
+  width: 80vw;
+}
+
+.card-content-row {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.image-box {
+  flex-shrink: 0;
+}
+
+.text-box {
+  flex-grow: 1;
 }

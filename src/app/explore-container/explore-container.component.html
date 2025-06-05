@@ -5,8 +5,8 @@
   (didDismiss)="setOpen(false)" cssClass="custom-alert" [backdropDismiss]="false"></ion-alert>
 
 
-    <div class="paperContent" *ngIf="selectedTab === 'paper' ">
-      <h1 class="mx-3">  Weight calculator</h1>
+    <div class="juteContent" *ngIf="selectedTab === 'paper' ">
+      <h1 class="mx-3 text-center"> &#9878;   Weight calculator</h1>
       <form [formGroup]="paperPricingForm" (ngSubmit)="onPaperSubmit()"> <!-- Bind FormGroup here -->
         <ion-list class="form-container scrollable-list">
 
@@ -32,7 +32,7 @@
     </div>
 
     <div class="juteContent" *ngIf="selectedTab === 'jute' ">
-      <h1 class="mx-3">  &#x20b9; Jute Bag Pricing</h1>
+      <h1 class="mx-3 text-center">  &#x20b9; Jute Bag Pricing</h1>
       <form [formGroup]="pricingForm" (ngSubmit)="onJuteSubmit()"> <!-- Bind FormGroup here -->
         <ion-list class="form-container scrollable-list">
           <ion-item>

@@ -24,6 +24,10 @@ const routes: Routes = [
         loadChildren: () => import('../explore-container/explore-container.module').then(m => m.ExploreContainerComponentModule)
       },
       {
+        path: 'canvas',
+        loadChildren: () =>  import('../canvas/canvas.module').then(m=> m.CanvasModule)
+      },
+      {
         path: '',
         redirectTo: '/dashboard/home',
         pathMatch: 'full'
