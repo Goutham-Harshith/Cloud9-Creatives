@@ -21,7 +21,11 @@ export const APP_CONSTANTS = {
     mini: '',
     small: '',
     medium:'',
-    hideSettings: false
+    hideSettings: false,
+    cottonCost: '',
+    cottonPanna: '',
+    withinStateCourier: '',
+    otherStateCourier: ''
 };
 
 // Example of using a type for your constants

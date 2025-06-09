@@ -1,8 +1,73 @@
 <ion-content [fullscreen]="true" class="ion-padding-top">
-  <div class="container mt-5">
+  <div class="center-content">
 
-   <h2 class="text-center">Coming Soon...</h2>
-
+    <div class="formContainer">
+      <h1 class="mx-3 text-center"> &#x20b9; Canvas Bag Pricing</h1>
+      <form [formGroup]="pricingForm" (ngSubmit)="onCanvasSubmit()"> <!-- Bind FormGroup here -->
+        <ion-list class="form-container scrollable-list">
+          <ion-item>
+            <ion-input label="Width :" type="number" labelPlacement="fixed" formControlName="width"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input label="Height :" labelPlacement="fixed" type="number" formControlName="height"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-input label="Gusset :" labelPlacement="fixed" type="number" formControlName="gusset"></ion-input>
+          </ion-item>
+          <ion-item>
+            <ion-label>Branding : </ion-label>
+            <ion-toggle formControlName="branding"></ion-toggle>
+          </ion-item>
+          <ion-item>
+            <ion-label>Zip : </ion-label>
+            <ion-select placeholder="Select one" labelPlacement="fixed" formControlName="zip">
+              <ion-select-option value="none">None</ion-select-option>
+              <ion-select-option value="zip">Zip</ion-select-option>
+              <ion-select-option value="velcro">Velcro</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label>Color : </ion-label>
+            <ion-select placeholder="Select one" labelPlacement="fixed" formControlName="color">
+              <ion-select-option value="white">White</ion-select-option>
+              <ion-select-option value="natural">Natural</ion-select-option>
+              <ion-select-option value="white and natural combination">Combination</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label>Quality :</ion-label>
+            <ion-select placeholder="Select one" labelPlacement="fixed" formControlName="quality">
+              <ion-select-option value="12x12">12x12</ion-select-option>
+              <ion-select-option value="14x15">14x15</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label>Handle :</ion-label>
+            <ion-select placeholder="Select one" labelPlacement="fixed" formControlName="handle">
+              <ion-select-option value="naturalTape">Natural tape</ion-select-option>
+              <ion-select-option value="whiteTape">White tape</ion-select-option>
+              <ion-select-option value="naturalRope">Natural Rope</ion-select-option>
+              <ion-select-option value="whiteRope">White Rope</ion-select-option>
+              <ion-select-option value="dhori">Dhori</ion-select-option>
+              <ion-select-option value="juteHandle">Jute Handle</ion-select-option>
+            </ion-select>
+          </ion-item>
+          <ion-item>
+            <ion-label>Print :</ion-label>
+            <ion-select placeholder="Select one" labelPlacement="fixed" formControlName="print">
+              <ion-select-option value="plain">Plain</ion-select-option>
+              <ion-select-option value="single">Single Print</ion-select-option>
+              <ion-select-option value="double">Double Print</ion-select-option>
+            </ion-select>
+          </ion-item>
+        </ion-list>
+        <div class="mx-3">
+          <ion-button class="float-right my-3" type="submit" expand="block" color="primary" expand="block">Get
+            Price</ion-button>
+        </div>
+      </form>
+    </div>
+    
   </div>
 
 </ion-content>

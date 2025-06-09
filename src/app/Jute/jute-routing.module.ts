@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { ExploreContainerComponent } from './explore-container.component';
+import { JuteComponent } from './jute.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: ExploreContainerComponent
+    component: JuteComponent
   }
 ];
 
@@ -13,4 +13,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule]
 })
-export class ExploreRoutingModule {}
+export class JuteRoutingModule {}

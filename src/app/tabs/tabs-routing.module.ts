@@ -20,12 +20,16 @@ const routes: Routes = [
         loadChildren: () => import('../tab3/tab3.module').then(m => m.Tab3PageModule)
       },
       {
-        path:'explore',
-        loadChildren: () => import('../explore-container/explore-container.module').then(m => m.ExploreContainerComponentModule)
+        path:'jute',
+        loadChildren: () => import('../Jute/jute.module').then(m => m.JuteModule)
       },
       {
         path: 'canvas',
         loadChildren: () =>  import('../canvas/canvas.module').then(m=> m.CanvasModule)
+      },
+      {
+        path: 'paper',
+        loadChildren: () =>  import('../paper/paper.module').then(m=> m.PaperModule)
       },
       {
         path: '',

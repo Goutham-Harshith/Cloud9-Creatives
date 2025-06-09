@@ -1,0 +1,63 @@
+<ion-content [fullscreen]="true" class="ion-padding-top">
+  <div class="center-content">
+<ion-alert [isOpen]="isAlertOpen" header="Important !"
+  message="Data is insufficient, you have to fill the settings form first." [buttons]="alertButtons"
+  (didDismiss)="setOpen(false)" cssClass="custom-alert" [backdropDismiss]="false"></ion-alert>
+
+
+    <div class="juteContent">
+      <h1 class="mx-3 text-center"> &#9878;   Weight calculator</h1>
+      <form [formGroup]="paperPricingForm" (ngSubmit)="onPaperSubmit()"> <!-- Bind FormGroup here -->
+        <ion-list class="form-container scrollable-list">
+
+          <ion-item>
+            <ion-label>Bag Modal :</ion-label>
+            <ion-select placeholder="Select one" labelPlacement="fixed" formControlName="bagSize">
+              <ion-select-option value="mini">Mini</ion-select-option>
+              <ion-select-option value="small">Small</ion-select-option>
+              <ion-select-option value="medium">Medium</ion-select-option>
+            </ion-select>
+          </ion-item>
+
+          <ion-item>
+            <ion-input label="Quantity : " type="number" labelPlacement="fixed" formControlName="quantity"></ion-input>
+          </ion-item>
+
+
+        </ion-list>
+        <div class="mx-3">
+          <ion-button class="float-right my-3" type="submit" color="primary" (click)="openModal('modal1')" expand="block" >Get Weight</ion-button>
+        </div>
+      </form>
+    </div>
+
+
+    <ion-modal id="modal1">
+      <ng-template>
+        <ion-header>
+          <ion-toolbar>
+            <ion-buttons slot="end">
+              <ion-button (click)="closeModal()" [strong]="true">Done</ion-button>
+            </ion-buttons>
+          </ion-toolbar>
+        </ion-header>
+        <ion-content class="ion-padding">
+          <div class="result-container">
+            <!-- Final Price as Heading -->
+            <h1 class="final-price">Weight : {{paperBagWeight}}kgs</h1>
+            
+            <!-- Description Below the Price -->
+            <p class="description">
+              {{paperBagDescription}}
+            </p>
+            
+            <!-- Optionally add a button or link to proceed -->
+            <ion-button expand="block" (click)="closeModal()">Go Back</ion-button>
+          </div>
+        </ion-content>
+      </ng-template>
+    </ion-modal>
+    
+  </div>
+</ion-content>
+

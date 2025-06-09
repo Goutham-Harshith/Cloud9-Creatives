@@ -7,15 +7,13 @@ import { Filesystem, Directory, Encoding } from '@capacitor/filesystem';
 import { Capacitor } from '@capacitor/core';
 
 @Component({
-  selector: 'app-explore-container',
-  templateUrl: './explore-container.component.html',
-  styleUrls: ['./explore-container.component.scss'],
+  selector: 'app-jute',
+  templateUrl: './jute.component.html',
+  styleUrls: ['./jute.component.scss'],
 })
-export class ExploreContainerComponent implements OnInit {
+export class JuteComponent implements OnInit {
 
-  selectedTab : string = 'paper';
   pricingForm: any = undefined;
-  paperPricingForm: any = undefined;
   priceList: any;
   isPriceValid : boolean = false;
   isAlertOpen = false;
@@ -24,8 +22,6 @@ export class ExploreContainerComponent implements OnInit {
   bagPrice: any = '';
   minOrderQuantity: number = 30;
   bagDescription: string = ''
-  paperBagDescription: string = ''
-  paperBagWeight: any;
   newJuteBagPrice : number = 0;
   newBagQuantity: number = 0;
   customerNumber: any = '';
@@ -201,26 +197,21 @@ export class ExploreContainerComponent implements OnInit {
 
   ngOnInit() {
     this.initAllForms();
-    this.route.queryParams.subscribe(params => {
-      this.isAlertOpen = false;
-      this.selectedTab = params['tab'];
-      console.log('Selected Tab:', this.selectedTab);
-
-      let localPriceList :any = localStorage.getItem('priceList')
-      this.priceList = JSON.parse(localPriceList);
-      console.log("priceList : ", this.priceList);
-      let keys= Object.keys(this.priceList);
-      keys.forEach((key)=>
+    
+    let localPriceList :any = localStorage.getItem('priceList')
+    this.priceList = JSON.parse(localPriceList);
+    console.log("priceList : ", this.priceList);
+    let keys= Object.keys(this.priceList);
+    keys.forEach((key)=>
+    {
+      if(this.priceList[key] === null)
       {
-        if(this.priceList[key] === null)
+        setTimeout(()=>
         {
-          setTimeout(()=>
-          {
-            this.isAlertOpen = true;
-          }, 0)
-        }
-      })
-    });
+          this.isAlertOpen = true;
+        }, 0)
+      }
+    })
   }
 
   ngAfterViewInit() {
@@ -250,35 +241,10 @@ export class ExploreContainerComponent implements OnInit {
       print: ['single', Validators.required],
     });
     
-    // Initialize the form
-    this.paperPricingForm = this.fb.group({
-      bagSize: ['mini', Validators.required],
-      quantity: [20, Validators.required]
-    });
-  }
 
-  onPaperSubmit()
-  {
-      console.log(this.paperPricingForm.value);
-      let quantity = this.paperPricingForm.value.quantity;
-      this.paperBagWeight = 0;
-      this.paperBagDescription = ``
-    switch (this.paperPricingForm.value.bagSize) {
-      case 'mini':
-        this.paperBagWeight = (this.priceList.mini * quantity) / 1000;
-        this.paperBagDescription = `the above weight is for Mini bags of ${quantity} quantity`
-        break;
-      case 'small':
-        this.paperBagWeight = (this.priceList.small * quantity) / 1000;
-        this.paperBagDescription = `the above weight is for Small bags of ${quantity} quantity`;
-        break;
-      case 'medium':
-        this.paperBagWeight = (this.priceList.medium * quantity) / 1000;
-        this.paperBagDescription = `the above weight is for Medium bags of ${quantity} quantity`;
-        break;
-    }
 
   }
+
 
   onJuteSubmit()
   {
