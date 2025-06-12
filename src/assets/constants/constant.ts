@@ -43,7 +43,22 @@ export const APP_CONSTANTS = {
     cottonLongHandle: '',
     cottonSmallTapeHandle: '',
     cottonLongTapeHandle: '',
-    cottonMiscellaneous: ''
+    cottonMiscellaneous: '',
+
+    //canvas
+    canvasCost: '',
+    canvasSquareInch: '',
+    canvasSinglePrint: '',
+    canvasDoublePrint: '',
+    canvasLabour: '',
+    canvasCurrent: '',
+    canvasMachineDip: '',
+    canvasThread: '',
+    canvasTapeHandle: '',
+    canvasRopeHandle: '',
+    canvasMiscellaneous: '',
+    canvasZip: '',
+    canvasVelcro: '',
 
 };
 

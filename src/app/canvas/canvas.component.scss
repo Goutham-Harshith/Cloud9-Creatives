@@ -1,109 +1,109 @@
 .center-content {
-    display: flex;
-    justify-content: center;  /* Centers horizontally */
-    align-items: center;      /* Centers vertically */
-    height: 100%;             /* Full height */
-    flex-direction: column;   /* Stack content vertically */
-    padding: 0 20px;          /* Optional: Add padding for spacing */
-  }
-  
-  .formContainer
-  {
-    border-radius: 10px;    /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), /* Outer shadow */
-                0 6px 20px rgba(0, 0, 0, 0.19); /* Larger shadow for depth */
-    perspective: 1000px;   /* Simulates 3D perspective */
-    transform: translateZ(0); /* Ensures GPU acceleration for smoother 3D effect */
-    border: 1px solid rgba(0, 0, 0, 0.1); /* Optional: Border for a sharper edge */
-  }
-  
-  .form-container {
-    width: 100%;              /* Takes full width */
-    max-width: 600px;          /* Limits the width on large screens */
-    padding: 0 15px;           /* Adds margin on left and right */
-    margin-top: 20px;          /* Adds margin on top */
-  }
-  
-  /* Optional: Add hover effect to emphasize 3D effect */
-  .formContainer:hover {
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3),
-                0 12px 40px rgba(0, 0, 0, 0.25); /* Stronger shadow on hover */
-    transform: translateZ(10px); /* Pushes the form slightly forward on hover */
-  }
-  
-  ion-item {
-    margin-bottom: 20px;       /* Adds space between items */
-  }
-  
-  h1 {
-    text-align: left;        /* Center title */
-    margin-bottom: 20px;       /* Space below heading */
-  }
-  
-  .scrollable-list {
-    max-height: 50vh;  /* Set the max height for the scroll area */
-    overflow-y: auto;   /* Enables vertical scrolling */
-  }
-  
-  /* Scrollbar Styles */
-  .scrollable-list::-webkit-scrollbar {
-    width: 8px;             /* Width of the scrollbar */
-  }
-  
-  .scrollable-list::-webkit-scrollbar-thumb {
-    border-radius: 10px;     /* Round the scrollbar thumb */
-    background-color: var(--scrollbar-thumb-color); /* Dynamically change color based on theme */
-  }
-  
-  .scrollable-list::-webkit-scrollbar-track {
-    background-color: var(--scrollbar-track-color); /* Track background color */
-    border-radius: 10px;
-  }
-  
-  /* Dark Theme */
-  .dark-theme .scrollable-list::-webkit-scrollbar-thumb {
-    background-color: #606060; /* Dark mode scrollbar thumb color */
-  }
-  
-  .dark-theme .scrollable-list::-webkit-scrollbar-track {
-    background-color: #303030; /* Dark mode scrollbar track color */
-  }
-  
-  /* Light Theme */
-  .light-theme .scrollable-list::-webkit-scrollbar-thumb {
-    background-color: #c0c0c0; /* Light mode scrollbar thumb color */
-  }
-  
-  .light-theme .scrollable-list::-webkit-scrollbar-track {
-    background-color: #e0e0e0; /* Light mode scrollbar track color */
-  }
-  
-  .float-right
-  {
-    float: right;
-  }
-  
-  ::ng-deep .custom-alert .alert-title {
-    color: red; /* Makes the header text red */
-    font-weight: bold;
-  }
-  
-  .resultTitle
-  {
-    text-align: center;
-  }
-  
-  .small-spinner {
-    width: 20px;
-    height: 20px;
-  }
-  
-  .d-flex
-  {
-    display: flex;
-  }
-  
-  .justify-content-end
-  {
-    justify-content: end;
-  }
+  display: flex;
+  justify-content: center;  /* Centers horizontally */
+  align-items: center;      /* Centers vertically */
+  height: 100%;             /* Full height */
+  flex-direction: column;   /* Stack content vertically */
+  padding: 0 20px;          /* Optional: Add padding for spacing */
+}
+
+.juteContent
+{
+  border-radius: 10px;    /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), /* Outer shadow */
+              0 6px 20px rgba(0, 0, 0, 0.19); /* Larger shadow for depth */
+  perspective: 1000px;   /* Simulates 3D perspective */
+  transform: translateZ(0); /* Ensures GPU acceleration for smoother 3D effect */
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Optional: Border for a sharper edge */
+}
+
+.form-container {
+  width: 100%;              /* Takes full width */
+  max-width: 600px;          /* Limits the width on large screens */
+  padding: 0 15px;           /* Adds margin on left and right */
+  margin-top: 20px;          /* Adds margin on top */
+}
+
+/* Optional: Add hover effect to emphasize 3D effect */
+.juteContent:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3),
+              0 12px 40px rgba(0, 0, 0, 0.25); /* Stronger shadow on hover */
+  transform: translateZ(10px); /* Pushes the form slightly forward on hover */
+}
+
+ion-item {
+  margin-bottom: 20px;       /* Adds space between items */
+}
+
+h1 {
+  text-align: left;        /* Center title */
+  margin-bottom: 20px;       /* Space below heading */
+}
+
+.scrollable-list {
+  max-height: 50vh;  /* Set the max height for the scroll area */
+  overflow-y: auto;   /* Enables vertical scrolling */
+}
+
+/* Scrollbar Styles */
+.scrollable-list::-webkit-scrollbar {
+  width: 8px;             /* Width of the scrollbar */
+}
+
+.scrollable-list::-webkit-scrollbar-thumb {
+  border-radius: 10px;     /* Round the scrollbar thumb */
+  background-color: var(--scrollbar-thumb-color); /* Dynamically change color based on theme */
+}
+
+.scrollable-list::-webkit-scrollbar-track {
+  background-color: var(--scrollbar-track-color); /* Track background color */
+  border-radius: 10px;
+}
+
+/* Dark Theme */
+.dark-theme .scrollable-list::-webkit-scrollbar-thumb {
+  background-color: #606060; /* Dark mode scrollbar thumb color */
+}
+
+.dark-theme .scrollable-list::-webkit-scrollbar-track {
+  background-color: #303030; /* Dark mode scrollbar track color */
+}
+
+/* Light Theme */
+.light-theme .scrollable-list::-webkit-scrollbar-thumb {
+  background-color: #c0c0c0; /* Light mode scrollbar thumb color */
+}
+
+.light-theme .scrollable-list::-webkit-scrollbar-track {
+  background-color: #e0e0e0; /* Light mode scrollbar track color */
+}
+
+.float-right
+{
+  float: right;
+}
+
+::ng-deep .custom-alert .alert-title {
+  color: red; /* Makes the header text red */
+  font-weight: bold;
+}
+
+.resultTitle
+{
+  text-align: center;
+}
+
+.small-spinner {
+  width: 20px;
+  height: 20px;
+}
+
+.d-flex
+{
+  display: flex;
+}
+
+.justify-content-end
+{
+  justify-content: end;
+}

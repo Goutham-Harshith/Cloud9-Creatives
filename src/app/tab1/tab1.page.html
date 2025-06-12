@@ -1,23 +1,6 @@
 <ion-content [fullscreen]="true" class="ion-padding-top">
   <div class="center-content">
 
-    <ion-card class="ripple-parent full-height-card" routerLink="/dashboard/paper">
-      <ion-ripple-effect></ion-ripple-effect>
-      <div class="card-content-row">
-        <div class="image-box">
-          <img alt="Paper bag image" width="130" height="150" src="assets/icon/paper_bag.png" />
-        </div>
-        <div class="text-box">
-          <ion-card-header>
-            <ion-card-title>Paper bags</ion-card-title>
-          </ion-card-header>
-          <ion-card-content>
-            Paper bag weight can be calculated here
-          </ion-card-content>
-        </div>
-      </div>
-    </ion-card>
-
     <ion-card class="ripple-parent full-height-card" routerLink="/dashboard/jute" [queryParams]="{tab : 'jute'}">
       <ion-ripple-effect></ion-ripple-effect>
       <div class="card-content-row">
@@ -30,6 +13,23 @@
           </ion-card-header>
           <ion-card-content>
             Jute bag pricing can be done here
+          </ion-card-content>
+        </div>
+      </div>
+    </ion-card>
+
+    <ion-card class="ripple-parent full-height-card" routerLink="/dashboard/paper">
+      <ion-ripple-effect></ion-ripple-effect>
+      <div class="card-content-row">
+        <div class="image-box">
+          <img alt="Paper bag image" width="130" height="150" src="assets/icon/paper_bag.png" />
+        </div>
+        <div class="text-box">
+          <ion-card-header>
+            <ion-card-title>Paper bags</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            Paper bag weight can be calculated here
           </ion-card-content>
         </div>
       </div>
