@@ -28,6 +28,10 @@ const routes: Routes = [
         loadChildren: () =>  import('../canvas/canvas.module').then(m=> m.CanvasModule)
       },
       {
+        path: 'cotton',
+        loadChildren: () =>  import('../cotton/cotton.module').then(m=> m.CottonModule)
+      },
+      {
         path: 'paper',
         loadChildren: () =>  import('../paper/paper.module').then(m=> m.PaperModule)
       },

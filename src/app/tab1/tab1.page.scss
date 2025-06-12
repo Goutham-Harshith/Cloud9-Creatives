@@ -24,7 +24,7 @@ ion-content {
 }
 
 .full-height-card {
-  height: 150px; /* or 100% if its parent allows it */
+  min-height: 150px; /* or 100% if its parent allows it */
   display: flex;
   width: 80vw;
 }

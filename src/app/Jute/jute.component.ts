@@ -803,7 +803,7 @@ export class JuteComponent implements OnInit {
         this.bagDescription = `Description: ${this.pricingForm.value.width}w x ${this.pricingForm.value.height}h x ${this.pricingForm.value.gusset}g (in inches) ${this.pricingForm.value.color} jute bag contains the following elements.\n`;
   
         const totalBill = this.newJuteBagPrice * this.newBagQuantity;
-        const advanceAmount = totalBill / 2;
+        const advanceAmount = Math.floor(totalBill / 2);
   
         // Define priceQuote with cleaned alignment
         let priceQuote = `
